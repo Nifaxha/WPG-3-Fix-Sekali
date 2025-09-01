@@ -74,6 +74,5 @@ public class PlayerMotor : MonoBehaviour
             speed = 8;
         else
             speed = 5;
-        //hlo
     }
 }
