@@ -7,8 +7,14 @@ public class PlayerLook : MonoBehaviour
     public Camera cam;
     private float xRotation = 0f;
 
-    public float xSensitivity = 30f;
-    public float ySensitivity = 30f;
+    public float xSensitivity = 20f;
+    public float ySensitivity = 20f;
+
+    void Start()
+    {
+        // Mengunci kursor di tengah layar saat game dimulai
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     public void ProcessLook(Vector2 input)
     {
