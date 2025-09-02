@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // Pastikan ini ada jika Anda menggunakan komponen UI lain
 
 public class PlayerInteraction : MonoBehaviour
 {
     public float playerReach = 3f;
     Interactable currentInteractable;
-    // Start is called before the first frame update
+
     void Update()
     {
         CheckInteraction();
-        if (Input.GetKeyDown(KeyCode.F) && currentInteractable != null) 
+        if (Input.GetKeyDown(KeyCode.F) && currentInteractable != null)
         {
             currentInteractable.Interact();
         }
@@ -22,27 +23,31 @@ public class PlayerInteraction : MonoBehaviour
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         if (Physics.Raycast(ray, out hit, playerReach))
         {
-            if (hit.collider.tag == "Interactable") //if looking at an interactable object.
+            if (hit.collider.tag == "Interactable")
             {
                 Interactable newInteractable = hit.collider.GetComponent<Interactable>();
-                // if there is a currentInteractable and it is not the newInteractable
 
-                if (newInteractable != currentInteractable)
+                if (newInteractable != null && newInteractable.enabled)
                 {
-                    DisableCurrentInteractable(); // Matikan outline objek sebelumnya
-                    SetNewCurrentInteractable(newInteractable); // Aktifkan outline objek baru
+                    // Hanya atur interaksi jika kita melihat objek baru
+                    if (newInteractable != currentInteractable)
+                    {
+                        SetNewCurrentInteractable(newInteractable);
+                    }
                 }
-                else //if new interactable is not enabled
+                else
+                {
+                    DisableCurrentInteractable();
+                }
+            }
+            else
             {
                 DisableCurrentInteractable();
             }
-            }
-
-            else //if not an interactable
-            {
-                DisableCurrentInteractable();
-            }
-
+        }
+        else
+        {
+            DisableCurrentInteractable();
         }
     }
 
@@ -50,6 +55,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         currentInteractable = newInteractable;
         currentInteractable.EnableOutline();
+
+        // Memanggil metode dari HUDController menggunakan instance
+        HUDController.instance.EnableInteractionText(newInteractable.message);
     }
 
     void DisableCurrentInteractable()
@@ -59,5 +67,8 @@ public class PlayerInteraction : MonoBehaviour
             currentInteractable.DisableOutline();
             currentInteractable = null;
         }
+
+        // Memanggil metode dari HUDController menggunakan instance
+        HUDController.instance.DisableInteractionText();
     }
 }
