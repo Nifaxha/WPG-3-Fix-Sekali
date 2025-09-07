@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Button_modified : MonoBehaviour
+public class ButtonController : MonoBehaviour
 {
-    Animator _anim;
-    public UnityEvent onPushed;
+    private Animator _animator;
 
     // Start is called before the first frame update
     void Start()
     {
-        _anim = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
-    public void PushButton()
+    // Update is called once per frame
+    void Update()
     {
-        _anim.SetTrigger("Pushed"); // Ganti dengan nama trigger animasi yang sesuai
-        onPushed.Invoke();
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            _animator.SetTrigger("Pushed");
+        }
+        if (Input.GetKeyUp(KeyCode.F))
+        {
+            _animator.SetTrigger("Released");
+        }
     }
 }
