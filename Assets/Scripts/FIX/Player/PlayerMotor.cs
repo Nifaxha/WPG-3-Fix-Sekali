@@ -71,8 +71,8 @@ public class PlayerMotor : MonoBehaviour
     {
         sprinting = !sprinting;
         if (sprinting)
-            speed = 8;
+            speed = 20;
         else
-            speed = 5;
+            speed = 10;
     }
 }
