@@ -681,8 +681,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: WPG 3 Move
-  metroPackageVersion: 
+  metroPackageName: WPG3Move
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -690,7 +690,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: WPG 3 Move
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: WPG 3 Move
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
