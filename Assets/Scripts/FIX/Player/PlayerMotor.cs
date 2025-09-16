@@ -11,7 +11,7 @@ public class PlayerMotor : MonoBehaviour
     private bool lerpCrouch = false;
     private bool sprinting = false;
     public float crouchTimer = 1;
-    public float speed = 5f;
+    public float speed = 10f;
     public float gravity = -9.8f;
     public float jumpHeight = 3f;
     // Start is called before the first frame update
