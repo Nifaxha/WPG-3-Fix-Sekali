@@ -48,6 +48,12 @@ public class MeshWallRadar : MonoBehaviour
         }
     }
 
+    // Di dalam script MeshWallRadar.cs
+    public List<RadarBlip> GetActiveBlips()
+    {
+        return activeBlips;
+    }
+
     void Start()
     {
         // Cari SubmarineCoordinates jika belum di-set

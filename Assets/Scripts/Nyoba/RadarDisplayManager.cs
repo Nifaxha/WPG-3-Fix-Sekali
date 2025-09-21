@@ -53,7 +53,7 @@ public class RadarDisplayManager : MonoBehaviour
         CreateScanLine();
 
         // 6. BUAT BLIP PREFAB
-        CreateBlipPrefab();
+        //CreateBlipPrefab();
 
         // 7. HUBUNGKAN KE RADAR SYSTEM
         ConnectToRadarSystem();
