@@ -3,7 +3,7 @@ using UnityEngine;
 public class CoordinateButton3D : MonoBehaviour
 {
     public string direction;   // "Forward", "Backward", "Left", "Right"
-    public float speed = 5f;
+    public float speed = 15f;
     public float pressDepth = 0.05f; // seberapa dalam tombol masuk
 
     private bool isHeld = false;

@@ -63,7 +63,7 @@ public class Radar3DController : MonoBehaviour
 
             // Simpan posisi X dan Z ke dalam channel warna R dan G di texture
             // Simpan sisa waktu blip di channel B
-            blipTextureData[i] = new Color(relativePos.x, relativePos.y, activeBlips[i].remainingTime / radarSystem.blipLifetime, 1);
+            blipTextureData[i] = new Color(-relativePos.x, relativePos.y, activeBlips[i].remainingTime / radarSystem.blipLifetime, 1);
         }
 
         // Terapkan data baru ke texture dan kirim ke shader

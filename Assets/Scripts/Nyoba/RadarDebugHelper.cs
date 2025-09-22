@@ -15,7 +15,7 @@ public class RadarDebugHelper : MonoBehaviour
 
     [Header("Manual Test")]
     public LayerMask testLayerMask = 1;
-    public float testRange = 50f;
+    public float testRange = 300f;
 
     void Update()
     {

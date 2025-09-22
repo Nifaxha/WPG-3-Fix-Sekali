@@ -15,7 +15,7 @@ public class SubmarineCoordinates : MonoBehaviour
     [Header("Movement Settings")]
     public float currentSpeed = 0f;
     public float acceleration = 1f;  // seberapa cepat speed naik/turun
-    public float maxSpeed = 5f;
+    public float maxSpeed = 15f;
 
     void Update()
     {
@@ -42,7 +42,7 @@ public class SubmarineCoordinates : MonoBehaviour
                 break;
         }
 
-        WrapCoordinateX();
+        //WrapCoordinateX();
     }
 
     private void IncreaseSpeed()
@@ -59,10 +59,10 @@ public class SubmarineCoordinates : MonoBehaviour
             currentSpeed = -maxSpeed;
     }
 
-    private void WrapCoordinateX()
-    {
-        currentX = Mathf.Repeat(currentX, 360f);
-    }
+    //private void WrapCoordinateX()
+    //{
+    //    currentX = Mathf.Repeat(currentX, 360f);
+    //}
 
     private void UpdateCoordinateText()
     {
