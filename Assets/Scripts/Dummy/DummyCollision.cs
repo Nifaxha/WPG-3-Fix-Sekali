@@ -2,29 +2,35 @@ using UnityEngine;
 
 public class DummyCollision : MonoBehaviour
 {
-    // Drag script pergerakan dummy Anda (yang mirip SubmarineCoordinates) ke sini
     public SubmarineCoordinates movementScript;
-
-    // Drag Kamera Utama Anda (yang akan kita beri script shaker) ke sini
-    public CameraShaker cameraShaker;
+    // public CameraShaker cameraShaker; // Kita nonaktifkan dulu untuk fokus pada tabrakan
 
     void OnCollisionEnter(Collision collision)
     {
+        // Pesan ini akan muncul SETIAP KALI dummy menyentuh collider APAPUN
+        Debug.Log($"<color=red><b>TABRAKAN TERDETEKSI!</b></color> Objek yang ditabrak: {collision.gameObject.name}, Layer: {LayerMask.LayerToName(collision.gameObject.layer)}");
+
         // Cek jika menabrak dinding di layer "Walls"
         if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
-            Debug.Log("DUMMY MENABRAK DINDING!");
+            Debug.Log("<color=yellow>Objek yang ditabrak adalah DINDING.</color>");
 
-            // 1. Hentikan pergerakan dummy
             if (movementScript != null)
             {
-                movementScript.currentSpeed = 0f;
+                if (movementScript.currentSpeed > 0)
+                {
+                    Debug.Log("<color=orange>Menghentikan pergerakan maju... Mengatur isBlocked = true dan currentSpeed = 0.</color>");
+                    movementScript.isBlocked = true;
+                    movementScript.currentSpeed = 0f;
+                }
+                else
+                {
+                    Debug.Log("Tabrakan terdeteksi, tetapi kapal tidak sedang bergerak maju (speed <= 0), jadi tidak dihentikan.");
+                }
             }
-
-            // 2. Perintahkan kamera untuk bergetar
-            if (cameraShaker != null)
+            else
             {
-                cameraShaker.StartShake();
+                Debug.LogError("Referensi 'movementScript' di DummyCollision KOSONG!");
             }
         }
     }

@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu/Main Menu.unity
     guid: cfe5fbb539ffbc343ae464984b92f437
   - enabled: 1
-    path: Assets/Scenes/Main Gameplay/Cube.unity
-    guid: 3c737e17b1ddc7143a1da70d422ddc3f
+    path: Assets/Scenes/Main Gameplay/Cube 1.unity
+    guid: 851181d1c3c76564b9b93bb3eca03731
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: e896f559096c4a140a9a9c1fde3c03c6, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: cd0d3ed5e8bdb1d49a792669a40ff3da, type: 3}
