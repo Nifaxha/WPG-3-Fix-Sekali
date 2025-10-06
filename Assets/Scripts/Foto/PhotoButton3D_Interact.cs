@@ -1,15 +1,21 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class PhotoButton3D_Interact : MonoBehaviour
 {
     [Header("Button Settings")]
-    public float pressDepth = 0.05f; // seberapa dalam tombol masuk
-    public float interactDistance = 3f; // jarak maksimum untuk interaksi
-    public KeyCode interactKey = KeyCode.E; // Ubah ke E untuk tombol monitor
+    public float pressDepth = 0.05f;
+    public float interactDistance = 3f;
+    public KeyCode interactKey = KeyCode.E;
+
+    [Header("Cooldown Settings")]
+    [Tooltip("Jeda antar penekanan tombol (dalam detik)")]
+    public float buttonCooldown = 3f; // <-- ubah sesuai durasi proses foto
+    private bool isOnCooldown = false;
 
     [Header("Visual Feedback")]
-    public GameObject interactPrompt; // UI prompt "Press E to take photo"
+    public GameObject interactPrompt;
     public Color highlightColor = Color.yellow;
     public Color normalColor = Color.white;
 
@@ -18,7 +24,7 @@ public class PhotoButton3D_Interact : MonoBehaviour
     public AudioClip buttonPressSound;
 
     [Header("Events")]
-    public UnityEvent OnButtonPressed; // Event yang akan dipanggil saat tombol ditekan
+    public UnityEvent OnButtonPressed;
 
     private Vector3 originalPos;
     private bool isPressed = false;
@@ -31,17 +37,14 @@ public class PhotoButton3D_Interact : MonoBehaviour
     {
         originalPos = transform.localPosition;
 
-        // Find player
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
 
-        // Get button renderer for highlight effect
         buttonRenderer = GetComponent<Renderer>();
         if (buttonRenderer != null)
             originalButtonColor = buttonRenderer.material.color;
 
-        // Hide interact prompt initially
         if (interactPrompt != null)
             interactPrompt.SetActive(false);
     }
@@ -60,23 +63,19 @@ public class PhotoButton3D_Interact : MonoBehaviour
         bool wasInRange = playerInRange;
         playerInRange = distance <= interactDistance;
 
-        // Show/hide interact prompt
         if (playerInRange != wasInRange)
         {
             if (interactPrompt != null)
-                interactPrompt.SetActive(playerInRange);
+                interactPrompt.SetActive(playerInRange && !isOnCooldown);
 
-            // Change button color for visual feedback
             if (buttonRenderer != null)
-            {
                 buttonRenderer.material.color = playerInRange ? highlightColor : originalButtonColor;
-            }
         }
     }
 
     void HandleInteraction()
     {
-        if (!playerInRange) return;
+        if (!playerInRange || isOnCooldown) return;
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -91,25 +90,21 @@ public class PhotoButton3D_Interact : MonoBehaviour
 
     public void PressButton()
     {
-        if (isPressed) return;
+        if (isPressed || isOnCooldown) return;
 
         isPressed = true;
         AnimateButton(true);
 
-        // Play button press sound
         if (buttonAudioSource != null && buttonPressSound != null)
-        {
             buttonAudioSource.PlayOneShot(buttonPressSound);
-        }
 
-        // Invoke the event (ini akan memanggil method yang di-assign di inspector)
         OnButtonPressed?.Invoke();
+        StartCoroutine(ButtonCooldownRoutine());
     }
 
     public void ReleaseButton()
     {
         if (!isPressed) return;
-
         isPressed = false;
         AnimateButton(false);
     }
@@ -121,9 +116,21 @@ public class PhotoButton3D_Interact : MonoBehaviour
             : originalPos;
     }
 
+    IEnumerator ButtonCooldownRoutine()
+    {
+        isOnCooldown = true;
+        if (interactPrompt != null)
+            interactPrompt.SetActive(false);
+
+        yield return new WaitForSeconds(buttonCooldown);
+
+        isOnCooldown = false;
+        if (playerInRange && interactPrompt != null)
+            interactPrompt.SetActive(true);
+    }
+
     void OnDrawGizmosSelected()
     {
-        // Draw interaction range
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, interactDistance);
     }

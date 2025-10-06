@@ -435,7 +435,8 @@ MonoBehaviour:
   acceleration: 2
   maxSpeed: 15
   isBlocked: 0
-  emergencyStopDeceleration: 5
+  brakeDeceleration: 8
+  lockXWhileBraking: 1
   movementAudio: {fileID: 972878298}
   movementClip: {fileID: 8300000, guid: 9a79df0677be7674aaed5668f49f50ae, type: 3}
   idleAudio: {fileID: 1053343657}
@@ -3355,7 +3356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pressDepth: 0.05
-  emergencyStop: 1
+  emergencyStop: 0
   highlightColor: {r: 1, g: 0, b: 0, a: 1}
   normalColor: {r: 1, g: 0, b: 0, a: 1}
   buttonAudioSource: {fileID: 636763086}
@@ -3380,6 +3381,7 @@ MonoBehaviour:
   pressDepth: 0.1
   interactDistance: 14
   interactKey: 101
+  buttonCooldown: 3
   interactPrompt: {fileID: 0}
   highlightColor: {r: 1, g: 0.015686274, b: 0.02140023, a: 1}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -7085,6 +7087,11 @@ MonoBehaviour:
   photoDisplayDuration: 3
   cameraAudioSource: {fileID: 1472445063}
   cameraShutterSound: {fileID: 8300000, guid: 1dfacb9103ffeed4281c83686f96944b, type: 3}
+  maxDefaultPhotoFails: 3
+  gameOverSceneName: 
+  onGameOver:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!82 &1472445063
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11109,9 +11116,9 @@ SceneRoots:
   - {fileID: 2041023965}
   - {fileID: 547617639}
   - {fileID: 1732989287}
-  - {fileID: 1472445061}
   - {fileID: 2024002153}
   - {fileID: 1399902277}
+  - {fileID: 1472445061}
   - {fileID: 1187901335}
   - {fileID: 612528451}
   - {fileID: 495947766}

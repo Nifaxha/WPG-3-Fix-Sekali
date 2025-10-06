@@ -1,7 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;               // NEW: untuk UnityEvent
+using UnityEngine.SceneManagement;      // NEW: untuk load scene opsional
 
 [System.Serializable]
 public class PhotoLocation
@@ -49,6 +51,20 @@ public class PhotoManager : MonoBehaviour
     public AudioSource cameraAudioSource;
     public AudioClip cameraShutterSound;
 
+    // ===================== NEW: Fail/Game Over Settings =====================
+    [Header("Fail / Game Over Settings")]
+    [Tooltip("Berapa kali mengambil foto default (salah) sebelum Game Over")]
+    public int maxDefaultPhotoFails = 3;
+
+    [Tooltip("Nama scene untuk Game Over. Kosongkan jika hanya ingin invoke event.")]
+    public string gameOverSceneName = "";
+
+    [Tooltip("Dipanggil saat Game Over (misal: memunculkan UI Game Over)")]
+    public UnityEvent onGameOver;
+
+    private int defaultPhotoFailCount = 0;
+    // =======================================================================
+
     // Private variables
     private bool canTakePhoto = true;
     private Vector2 currentPlayerCoordinates;
@@ -69,6 +85,7 @@ public class PhotoManager : MonoBehaviour
             Debug.Log($"Current coordinates: X:{currentPlayerCoordinates.x:F1} Z:{currentPlayerCoordinates.y:F1}");
             Debug.Log($"Can take photo: {canTakePhoto}");
             Debug.Log($"Photo locations count: {photoLocations.Count}");
+            Debug.Log($"Default photo fails: {defaultPhotoFailCount}/{maxDefaultPhotoFails}"); // NEW
         }
     }
 
@@ -83,7 +100,7 @@ public class PhotoManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("? Monitor display system ready!");
+            Debug.Log("✅ Monitor display system ready!");
             // Hide monitor photo initially
             monitorPhotoDisplay.gameObject.SetActive(false);
             if (monitorStatusText != null)
@@ -113,6 +130,9 @@ public class PhotoManager : MonoBehaviour
 
         Debug.Log($"PhotoManager initialized with {photoLocations.Count} photo locations.");
         Debug.Log("Press F1 in play mode for debug info, or E near button to take photo.");
+
+        // NEW: Reset fail counter
+        defaultPhotoFailCount = 0;
     }
 
     void HandleKeyboardInput()
@@ -150,7 +170,7 @@ public class PhotoManager : MonoBehaviour
 
         if (!canTakePhoto)
         {
-            Debug.Log("Cannot take photo - camera is busy");
+            Debug.Log("Cannot take photo - camera is busy or game over");
             return;
         }
 
@@ -160,9 +180,9 @@ public class PhotoManager : MonoBehaviour
             return;
         }
 
-        if (photoDisplayUI == null)
+        if (photoDisplayUI == null && monitorPhotoDisplay == null)
         {
-            Debug.LogError("Cannot take photo - Photo Display UI not assigned!");
+            Debug.LogError("Cannot take photo - No display assigned!");
             return;
         }
 
@@ -210,12 +230,16 @@ public class PhotoManager : MonoBehaviour
         else
         {
             Debug.Log("Displaying white photo - no location found");
-            DisplayWhitePhoto();
+            DisplayWhitePhoto(); // <-- di sini hitung salah + cek Game Over
         }
 
         // Wait before allowing next photo
         yield return new WaitForSeconds(0.5f);
-        canTakePhoto = true;
+
+        // Jika sudah game over, jangan izinkan ambil foto lagi
+        if (!IsGameOver())
+            canTakePhoto = true;
+
         Debug.Log("Photo sequence completed");
     }
 
@@ -272,7 +296,7 @@ public class PhotoManager : MonoBehaviour
         // WAJIB: Tampilkan di monitor canvas (UI merah) - TIDAK ADA FALLBACK
         if (monitorPhotoDisplay != null)
         {
-            Debug.Log("? Displaying photo on MONITOR CANVAS (World Space)");
+            Debug.Log("🖼 Displaying photo on MONITOR CANVAS (World Space)");
             monitorPhotoDisplay.sprite = location.photoSprite;
             monitorPhotoDisplay.gameObject.SetActive(true);
 
@@ -290,7 +314,7 @@ public class PhotoManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("? MONITOR PHOTO DISPLAY NOT ASSIGNED!");
+            Debug.LogError("❌ MONITOR PHOTO DISPLAY NOT ASSIGNED!");
             Debug.LogError("Photo cannot be displayed! Please assign Monitor Photo Display in PhotoManager.");
 
             // EMERGENCY FALLBACK ONLY
@@ -317,22 +341,32 @@ public class PhotoManager : MonoBehaviour
         // WAJIB: Tampilkan di monitor canvas (UI merah) - TIDAK ADA FALLBACK
         if (monitorPhotoDisplay != null)
         {
-            Debug.Log("? Displaying white photo on MONITOR CANVAS (World Space)");
+            Debug.Log("🖼 Displaying white photo on MONITOR CANVAS (World Space)");
             monitorPhotoDisplay.sprite = defaultWhitePhoto;
             monitorPhotoDisplay.gameObject.SetActive(true);
 
-            // Update status text di monitor jika ada
+            // ===== NEW: Tambahkan hitungan salah + update status =====
+            defaultPhotoFailCount = Mathf.Clamp(defaultPhotoFailCount + 1, 0, maxDefaultPhotoFails);
+
             if (monitorStatusText != null)
             {
-                monitorStatusText.text = "NO ANOMALIES DETECTED";
+                if (defaultPhotoFailCount >= maxDefaultPhotoFails)
+                {
+                    monitorStatusText.text = $"MISSION FAILED\nWrong Photos: {defaultPhotoFailCount}/{maxDefaultPhotoFails}";
+                }
+                else
+                {
+                    monitorStatusText.text = $"NO ANOMALIES DETECTED\nWrong Photos: {defaultPhotoFailCount}/{maxDefaultPhotoFails}";
+                }
                 monitorStatusText.gameObject.SetActive(true);
             }
+            // ========================================================
 
             StartCoroutine(HideMonitorPhotoAfterDelay(photoDisplayDuration));
         }
         else
         {
-            Debug.LogError("? MONITOR PHOTO DISPLAY NOT ASSIGNED!");
+            Debug.LogError("❌ MONITOR PHOTO DISPLAY NOT ASSIGNED!");
             Debug.LogError("Photo cannot be displayed! Please assign Monitor Photo Display in PhotoManager.");
 
             // EMERGENCY FALLBACK ONLY
@@ -343,6 +377,15 @@ public class PhotoManager : MonoBehaviour
                 photoDisplayUI.gameObject.SetActive(true);
                 StartCoroutine(HidePhotoAfterDelay(photoDisplayDuration));
             }
+
+            // Tetap naikkan counter walau fallback
+            defaultPhotoFailCount = Mathf.Clamp(defaultPhotoFailCount + 1, 0, maxDefaultPhotoFails);
+        }
+
+        // NEW: Cek Game Over setelah menampilkan white photo
+        if (defaultPhotoFailCount >= maxDefaultPhotoFails)
+        {
+            TriggerGameOver();
         }
     }
 
@@ -364,7 +407,7 @@ public class PhotoManager : MonoBehaviour
             monitorPhotoDisplay.gameObject.SetActive(false);
             Debug.Log("Monitor photo hidden");
         }
-        if (monitorStatusText != null)
+        if (monitorStatusText != null && !IsGameOver()) // NEW: biar pesan gagal tetap tampil jika game over
         {
             monitorStatusText.gameObject.SetActive(false);
         }
@@ -402,4 +445,42 @@ public class PhotoManager : MonoBehaviour
     {
         return currentPlayerCoordinates;
     }
+
+    // =========================== NEW: Game Over Logic ===========================
+    private bool gameOverTriggered = false;
+
+    private bool IsGameOver()
+    {
+        return gameOverTriggered;
+    }
+
+    private void TriggerGameOver()
+    {
+        if (gameOverTriggered) return;
+
+        gameOverTriggered = true;
+        canTakePhoto = false;
+
+        Debug.LogWarning("=== GAME OVER: Too many wrong photos ===");
+
+        // Biarkan status "MISSION FAILED" tetap di layar monitor
+        if (monitorStatusText != null)
+        {
+            monitorStatusText.gameObject.SetActive(true);
+        }
+
+        // Invoke event (bisa dihubungkan ke UI Game Over, SFX, dsb)
+        onGameOver?.Invoke();
+
+        // Opsional: Load scene Game Over jika nama scene diisi
+        if (!string.IsNullOrEmpty(gameOverSceneName))
+        {
+            // Pastikan scene sudah ditambahkan di Build Settings
+            SceneManager.LoadScene(gameOverSceneName);
+        }
+
+        // Alternatif jika tak pakai scene:
+        // Time.timeScale = 0f; // pause total (opsional)
+    }
+    // ============================================================================
 }

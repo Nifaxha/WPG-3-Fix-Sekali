@@ -19,8 +19,11 @@ public class SubmarineCoordinates : MonoBehaviour
     public bool isBlocked = false;
     private Rigidbody rb;
 
-    [Header("Stop Settings")]
-    public float emergencyStopDeceleration = 5f; // Deceleration rate saat emergency stop
+    [Header("Braking Settings")]
+    public float brakeDeceleration = 5f;
+    public bool lockXWhileBraking = true;
+    private bool isBraking = false;
+    private float brakeTarget = 0f; // 0
 
     [Header("Audio")]
     public AudioSource movementAudio;   // audio gerak
@@ -79,13 +82,26 @@ public class SubmarineCoordinates : MonoBehaviour
     }
     void FixedUpdate()
     {
-        // Pesan ini akan muncul di setiap frame fisika
-        Debug.Log($"FixedUpdate Status: Speed = {currentSpeed}, isBlocked = {isBlocked}");
+        // Log status (boleh dimatikan kalau kebanyakan spam)
+        // Debug.Log($"FixedUpdate Status: Speed = {currentSpeed}, isBlocked = {isBlocked}, isBraking = {isBraking}");
 
+        // Kalau sedang ngerem, turunkan speed pelan-pelan menuju 0
+        if (isBraking)
+        {
+            currentSpeed = Mathf.MoveTowards(currentSpeed, brakeTarget, brakeDeceleration * Time.fixedDeltaTime);
+            if (Mathf.Approximately(currentSpeed, brakeTarget))
+            {
+                currentSpeed = brakeTarget;
+                isBraking = false; // selesai ngerem
+            }
+        }
+
+        // Posisi maju-mundur pakai currentSpeed
         currentZ += currentSpeed * Time.fixedDeltaTime;
         Vector3 newPosition = new Vector3(currentX, rb.position.y, currentZ);
         rb.MovePosition(newPosition);
     }
+
 
     void Update()
     {
@@ -121,7 +137,14 @@ public class SubmarineCoordinates : MonoBehaviour
 
     public void ChangeCoordinate(string direction, float speed)
     {
-        // hitung posisi berikutnya
+        // Saat ngerem, opsional: kunci belok kiri/kanan agar fokus berhenti
+        if (isBraking && lockXWhileBraking && (direction == "Left" || direction == "Right"))
+        {
+            // Boleh kasih getaran kecil biar ada feedback
+            TriggerShake(0.01f, 0.1f);
+            return;
+        }
+
         float nextX = currentX;
         float nextZ = currentZ;
 
@@ -135,30 +158,26 @@ public class SubmarineCoordinates : MonoBehaviour
                 break;
             case "Forward":
                 IncreaseSpeed();
-                return; // untuk maju mundur tetap pakai IncreaseSpeed/DecreaseSpeed
+                return;
             case "Backward":
                 DecreaseSpeed();
                 return;
         }
 
-        // cek tembok sebelum update
         Vector3 nextPos = new Vector3(nextX, 0, nextZ);
         if (!Physics.CheckSphere(nextPos, checkRadius, wallLayer))
         {
-            // aman jalan
             currentX = nextX;
             currentZ = nextZ;
-
-            // getar kecil seperti biasa
             TriggerShake(0.01f, 0.1f);
         }
         else
         {
-            // ada tembok, misalnya getar lebih besar untuk efek “nabrak”
             TriggerShake(0.05f, 0.2f);
             Debug.Log("Blocked by wall!");
         }
     }
+
 
     private void TriggerShake(float intensity = -1f, float duration = -1f)
     {
@@ -212,22 +231,23 @@ public class SubmarineCoordinates : MonoBehaviour
 
     public void EmergencyStop()
     {
+        // Matikan pengereman dan langsung set 0
+        isBraking = false;
+        brakeTarget = 0f;
         currentSpeed = 0f;
         Debug.Log("Emergency Stop Activated - Speed set to 0");
     }
 
     public void GradualStop()
     {
-        if (currentSpeed > 0)
-        {
-            currentSpeed -= emergencyStopDeceleration * Time.deltaTime;
-            if (currentSpeed < 0) currentSpeed = 0;
-        }
-        else if (currentSpeed < 0)
-        {
-            currentSpeed += emergencyStopDeceleration * Time.deltaTime;
-            if (currentSpeed > 0) currentSpeed = 0;
-        }
+        // Aktifkan pengereman agar speed turun halus setiap frame
+        brakeTarget = 0f;
+        isBraking = true;
+
+        // (Opsional) Getaran kecil di awal pengereman
+        TriggerShake(0.02f, 0.15f);
+
+        Debug.Log("Gradual Stop Triggered - Braking towards 0");
     }
 
     public bool IsMoving()
