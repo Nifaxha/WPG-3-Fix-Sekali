@@ -454,7 +454,7 @@ RectTransform:
   m_GameObject: {fileID: 165004800}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 496043428}
@@ -508,8 +508,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: fcbc46395bb7a6b4e8c36955a9c46bac, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -637,6 +637,7 @@ MonoBehaviour:
   acceleration: 2
   maxSpeed: 15
   isBlocked: 0
+  collisionNormal: {x: 0, y: 0, z: 0}
   brakeDeceleration: 8
   lockXWhileBraking: 1
   movementAudio: {fileID: 972878298}
@@ -2535,7 +2536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6730,7 +6731,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7790,7 +7791,7 @@ MonoBehaviour:
   cameraAudioSource: {fileID: 1472445063}
   cameraShutterSound: {fileID: 8300000, guid: 1dfacb9103ffeed4281c83686f96944b, type: 3}
   maxDefaultPhotoFails: 3
-  gameOverSceneName: 
+  gameOverSceneName: Main Menu
   onGameOver:
     m_PersistentCalls:
       m_Calls: []
@@ -11155,13 +11156,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapPanel: {fileID: 496043427}
+  photoManager: {fileID: 0}
+  nodeContainer: {fileID: 0}
+  coordinateNodePrefab: {fileID: 0}
   coordinateDisplayText: {fileID: 1237011804}
-  gridContainer: {fileID: 165004801}
-  coordinateBoxPrefab: {fileID: 5141869100480445883, guid: ed965e67fb2b5f0458cf0ddc2801f681, type: 3}
-  gridWidth: 10
-  gridHeight: 10
-  coordinateStep: 500
-  startCoordinates: {x: -2500, y: -2500}
+  worldMinBounds: {x: 0, y: 0}
+  worldMaxBounds: {x: 0, y: 0}
 --- !u!4 &2062091681
 Transform:
   m_ObjectHideFlags: 0
