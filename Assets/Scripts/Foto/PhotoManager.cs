@@ -51,6 +51,9 @@ public class PhotoManager : MonoBehaviour
     public AudioSource cameraAudioSource;
     public AudioClip cameraShutterSound;
 
+    // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
+    public static event System.Action<Vector2> OnPhotoTaken;
+
     // ===================== NEW: Fail/Game Over Settings =====================
     [Header("Fail / Game Over Settings")]
     [Tooltip("Berapa kali mengambil foto default (salah) sebelum Game Over")]
@@ -311,6 +314,17 @@ public class PhotoManager : MonoBehaviour
             }
 
             StartCoroutine(HideMonitorPhotoAfterDelay(photoDisplayDuration));
+
+            if (!location.hasBeenPhotographed)
+            {
+                location.hasBeenPhotographed = true;
+                Debug.Log($"New location discovered: {location.locationName}");
+
+                // ================== TAMBAHKAN BARIS INI ==================
+                // Kirim sinyal beserta koordinat lokasi yang berhasil difoto
+                OnPhotoTaken?.Invoke(location.coordinates);
+                // =========================================================
+            }
         }
         else
         {

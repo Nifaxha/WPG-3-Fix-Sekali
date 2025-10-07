@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class PhysicalBlipController : MonoBehaviour
@@ -11,7 +11,6 @@ public class PhysicalBlipController : MonoBehaviour
     public float radarDisplayRadius = 2.18f;
     public float blipHoverOffset = 0.05f;
 
-    // ---- BARU: Variabel untuk memperbaiki rotasi blip ----
     [Tooltip("Ubah nilai ini (misal: 0, 90, 180, -90) jika arah blip terbalik atau tidak sesuai.")]
     public float blipRotationOffset = 0f;
 
@@ -53,8 +52,7 @@ public class PhysicalBlipController : MonoBehaviour
         {
             Vector2 relativePos = (blip.worldPosition - submarinePos) / radarSystem.radarRange;
 
-            // ---- DIUBAH: Terapkan rotasi offset pada posisi relatif ----
-            // Kita akan memutar vektor posisi relatif berdasarkan offset yang diberikan
+            // Terapkan rotasi offset pada posisi relatif
             float angleRad = blipRotationOffset * Mathf.Deg2Rad;
             float cos = Mathf.Cos(angleRad);
             float sin = Mathf.Sin(angleRad);
@@ -62,12 +60,14 @@ public class PhysicalBlipController : MonoBehaviour
                 relativePos.x * cos - relativePos.y * sin,
                 relativePos.x * sin + relativePos.y * cos
             );
-            // --------------------------------------------------------
 
+            // PERBAIKAN: Swap sumbu X dan Z untuk mencocokkan orientasi radar
+            // X world (kiri-kanan) -> X radar (kiri-kanan)
+            // Z world (depan-belakang) -> Z radar (atas-bawah)
             Vector3 blipLocalPosition = new Vector3(
-                -rotatedRelativePos.x * radarDisplayRadius,
+                rotatedRelativePos.x * radarDisplayRadius,  // Hilangkan tanda minus
                 surfaceYPosition + blipHoverOffset,
-                rotatedRelativePos.y * radarDisplayRadius
+                rotatedRelativePos.y * radarDisplayRadius   // Tetap positif
             );
 
             if (activeBlipObjects.ContainsKey(blip))
@@ -78,6 +78,7 @@ public class PhysicalBlipController : MonoBehaviour
             {
                 GameObject newBlipObject = Instantiate(blipPrefab, transform);
                 newBlipObject.transform.position = transform.TransformPoint(blipLocalPosition);
+                newBlipObject.transform.localScale = Vector3.one * 0.05f;
                 activeBlipObjects.Add(blip, newBlipObject);
             }
         }
