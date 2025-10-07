@@ -78,7 +78,7 @@ public class PhysicalBlipController : MonoBehaviour
             {
                 GameObject newBlipObject = Instantiate(blipPrefab, transform);
                 newBlipObject.transform.position = transform.TransformPoint(blipLocalPosition);
-                newBlipObject.transform.localScale = Vector3.one * 0.05f;
+                newBlipObject.transform.localScale = Vector3.one * 0.03f;
                 activeBlipObjects.Add(blip, newBlipObject);
             }
         }
