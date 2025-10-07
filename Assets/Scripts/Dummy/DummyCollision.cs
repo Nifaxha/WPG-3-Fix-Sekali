@@ -3,6 +3,7 @@ using UnityEngine;
 public class DummyCollision : MonoBehaviour
 {
     public SubmarineCoordinates movementScript;
+    public SubmarineHealth healthSystem; // Referensi ke health system
 
     private int wallCollisionCount = 0;
     private Vector3 lastCollisionNormal = Vector3.zero;
