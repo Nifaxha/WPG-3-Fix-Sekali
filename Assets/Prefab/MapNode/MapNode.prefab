@@ -88,6 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129942490cd5a61478f4d4a77e50fd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinate: {x: 0, y: 0}
+  coordinateXZ: {x: 0, y: 0}
   icon: {fileID: 0}
   checkmarkSprite: {fileID: 0}

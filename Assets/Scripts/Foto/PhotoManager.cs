@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class PhotoLocation
 {
+    public int id;
     [Header("Location Settings (X,Z coordinates only)")]
     public Vector2 coordinates;
     public float radius = 5f;
@@ -32,7 +33,7 @@ public class PhotoManager : MonoBehaviour
     public bool allowButtonInput = true;
 
     [Header("Monitor Integration - PRIORITAS UTAMA")]
-    public Canvas monitorCanvas;
+    public Canvas monitorCanvas;    
     public Image monitorPhotoDisplay;
     public Text monitorStatusText;
 
@@ -52,6 +53,7 @@ public class PhotoManager : MonoBehaviour
     public AudioClip cameraShutterSound;
     // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
     public static event System.Action<Vector2> OnPhotoTaken;
+    public static event System.Action<int> OnPhotoTakenById;
 
     // ===================== FAIL / GAME OVER =====================
     [Header("Fail / Game Over Settings")]
@@ -85,6 +87,10 @@ public class PhotoManager : MonoBehaviour
 
     void Start()
     {
+        // NEW: beri id berurutan agar konsisten dengan urutan list
+        for (int i = 0; i < photoLocations.Count; i++)
+            photoLocations[i].id = i;
+
         InitializePhotoSystem();
     }
 
@@ -253,11 +259,12 @@ public class PhotoManager : MonoBehaviour
                 location.hasBeenPhotographed = true;
                 Debug.Log($"New location discovered: {location.locationName}");
 
-                // ================== TAMBAHKAN BARIS INI ==================
-                // Kirim sinyal beserta koordinat lokasi yang berhasil difoto
+                // Sudah ada:
                 OnPhotoTaken?.Invoke(location.coordinates);
-                // =========================================================
-            }
+
+                // NEW: cocokkan by ID (anti mismatch)
+                OnPhotoTakenById?.Invoke(location.id);
+            }
             StartCoroutine(HideMonitorPhotoAfterDelay(photoDisplayDuration));
         }
         else if (photoDisplayUI != null)

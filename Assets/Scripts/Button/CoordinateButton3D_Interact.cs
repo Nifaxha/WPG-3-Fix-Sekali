@@ -17,6 +17,23 @@ public class CoordinateButton3D_Interact : MonoBehaviour
     private SubmarineCoordinates coordSystem;
     private Vector3 originalPos;
     private bool isHeld = false;
+    [Header("Highlight (optional)")]
+    public Renderer highlightRenderer;
+    public Color highlightColor = new Color(1f, 0.85f, 0.2f);
+    private Color _normalColor;
+    private bool _hasHighlightRenderer;
+
+    void Awake()
+    {
+        if (!highlightRenderer)
+            highlightRenderer = GetComponentInChildren<Renderer>();
+
+        if (highlightRenderer)
+        {
+            _normalColor = highlightRenderer.material.color;
+            _hasHighlightRenderer = true;
+        }
+    }
 
     void Start()
     {
@@ -83,5 +100,11 @@ public class CoordinateButton3D_Interact : MonoBehaviour
         transform.localPosition = pressed
             ? originalPos + new Vector3(0, -pressDepth, 0)
             : originalPos;
+    }
+
+    public void SetHighlight(bool on)
+    {
+        if (_hasHighlightRenderer)
+            highlightRenderer.material.color = on ? highlightColor : _normalColor;
     }
 }
