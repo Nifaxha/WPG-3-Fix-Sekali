@@ -217,7 +217,7 @@ public class SubmarineCoordinates : MonoBehaviour
         }
     }
 
-    private void TriggerShake(float intensity = -1f, float duration = -1f)
+    public void TriggerShake(float intensity = -1f, float duration = -1f)
     {
         if (intensity > 0f) shakeIntensity = intensity;
         if (duration > 0f) shakeDuration = duration;

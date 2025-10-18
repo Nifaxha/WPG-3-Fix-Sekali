@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -10,19 +10,25 @@ public class SubmarineHealth : MonoBehaviour
     public int maxHealth = 3;
     public int currentHealth;
 
+    [Header("UI Health")]
+    public Image[] healthIcons;                 // ⬅️ hanya sekali
+    [Tooltip("Sprite untuk hati penuh (normal)")]
+    public Sprite heartFull;
+    [Tooltip("Sprite untuk hati kosong (transparan)")]
+    public Sprite heartEmpty;
+    public TextMeshProUGUI healthText;          // ⬅️ hanya sekali
+
     [Header("UI References")]
-    public Image[] healthIcons; // Array untuk 3 icon health (misal: gambar hati)
-    public TextMeshProUGUI healthText; // Text untuk menampilkan "Health: 3/3"
-    public GameObject damagePanel; // Panel merah yang flash saat kena damage
+    public GameObject damagePanel;
     public float damagePanelDuration = 0.5f;
 
     [Header("Game Over Settings")]
-    public string mainMenuSceneName = "MainMenu"; // Nama scene main menu Anda
-    public GameObject gameOverPanel; // Panel Game Over (opsional)
-    public float delayBeforeMainMenu = 2f; // Delay sebelum kembali ke main menu
+    public string mainMenuSceneName = "MainMenu";
+    public GameObject gameOverPanel;
+    public float delayBeforeMainMenu = 2f;
 
     [Header("Damage Cooldown")]
-    public float damageCooldown = 1f; // Cooldown agar tidak langsung kena damage berkali-kali
+    public float damageCooldown = 1f;
     private float lastDamageTime = -999f;
 
     [Header("Audio (Optional)")]
@@ -30,12 +36,18 @@ public class SubmarineHealth : MonoBehaviour
     public AudioClip damageSound;
     public AudioClip gameOverSound;
 
-    [Header("Camera Shake on Damage")]
-    public CameraShaker cameraShaker; // Referensi ke CameraShaker jika ada
-    public float damageShakeIntensity = 0.3f;
-    public float damageShakeDuration = 0.5f;
+    //[Header("Camera Shake on Damage")]
+    //public CameraShaker cameraShaker;
+    //public float damageShakeIntensity = 0.3f;
+    //public float damageShakeDuration = 0.5f;
+
+    [Header("Camera Shake (via SubmarineCoordinates)")]
+    public SubmarineCoordinates movementShake; // drag komponen SubmarineCoordinates di Inspector
+    public float hitShakeIntensity = 0.08f;
+    public float hitShakeDuration = 0.25f;
 
     private bool isDead = false;
+
 
     void Start()
     {
@@ -81,6 +93,11 @@ public class SubmarineHealth : MonoBehaviour
         // Efek visual damage
         ShowDamageEffect();
 
+        if (movementShake != null)
+        {
+            movementShake.TriggerShake(hitShakeIntensity, hitShakeDuration);
+        }
+
         // Play sound
         if (damageAudioSource != null && damageSound != null)
         {
@@ -97,28 +114,36 @@ public class SubmarineHealth : MonoBehaviour
 
     void UpdateHealthUI()
     {
-        // Update health icons (misal: 3 hati, yang habis jadi abu-abu atau hilang)
+        // Selalu tampilkan 3 ikon; yang hilang dibuat transparan
         if (healthIcons != null && healthIcons.Length > 0)
         {
             for (int i = 0; i < healthIcons.Length; i++)
             {
-                if (healthIcons[i] != null)
-                {
-                    // Aktifkan icon jika masih ada health
-                    healthIcons[i].enabled = (i < currentHealth);
+                if (healthIcons[i] == null) continue;
 
-                    // Atau ubah warna jadi abu-abu
-                    // healthIcons[i].color = (i < currentHealth) ? Color.white : Color.gray;
-                }
+                // Pastikan ikon aktif (tidak di-disable)
+                healthIcons[i].enabled = true;
+
+                // Ubah sprite sesuai kondisi
+                bool full = i < currentHealth;
+                if (heartFull != null && heartEmpty != null)
+                    healthIcons[i].sprite = full ? heartFull : heartEmpty;
+
+                // Opaque untuk health yang masih ada, transparan untuk yang sudah hilang
+                // contoh transparan 35%
+                float alpha = full ? 1f : 0.35f;
+
+                Color c = healthIcons[i].color;
+                c.a = alpha;
+                healthIcons[i].color = c;
             }
         }
 
-        // Update text
+        // (Opsional) tampilkan teks Health kalau ada
         if (healthText != null)
-        {
             healthText.text = $"Health: {currentHealth}/{maxHealth}";
-        }
     }
+
 
     void ShowDamageEffect()
     {

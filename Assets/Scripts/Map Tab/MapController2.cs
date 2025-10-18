@@ -21,6 +21,21 @@ public class MapController2 : MonoBehaviour
     private bool isOpen = false;
     private Dictionary<int, MapNode_Z> nodeById = new();
 
+    private void CacheManualNodes()
+    {
+        nodeById.Clear();
+        // Ambil semua MapNode_Z yang kamu letakkan di bawah GridContainer/nodeParent
+        var nodes = nodeParent.GetComponentsInChildren<MapNode_Z>(true);
+        foreach (var n in nodes)
+        {
+            if (!nodeById.ContainsKey(n.locationId))
+                nodeById.Add(n.locationId, n);
+            else
+                Debug.LogWarning($"[Map] Duplikat locationId {n.locationId} pada node {n.name}");
+        }
+        Debug.Log($"[Map] Cached {nodeById.Count} manual nodes.");
+    }
+
     void Start()
     {
         mapUI.SetActive(false);
@@ -30,7 +45,9 @@ public class MapController2 : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        GenerateMapNodes();                   // ← bikin node dari PhotoManager
+        // Kumpulkan node yang kamu tempatkan MANUAL di GridContainer
+        CacheManualNodes();
+
         PhotoManager.OnPhotoTakenById += HandlePhotoTakenById;
     }
 
@@ -109,8 +126,7 @@ public class MapController2 : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[Map] No node found for id {id}. Pastikan auto-generate berjalan.");
+            Debug.LogWarning($"[Map] Tidak ada node dengan id {id}. Pastikan locationId di node sama dengan ID di PhotoManager.");
         }
     }
 }
-    

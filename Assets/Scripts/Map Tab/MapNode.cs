@@ -44,35 +44,19 @@ public class MapNode_Z : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         isCompleted = true;
 
         if (icon == null) icon = GetComponent<Image>();
-        if (icon == null)
-        {
-            Debug.LogError("[MapNode_Z] Image (icon) tidak ditemukan.", this);
-            return;
-        }
-        if (checkmarkSprite == null)
-        {
-            Debug.LogError("[MapNode_Z] Checkmark Sprite belum di-assign.", this);
-            return;
-        }
+        if (icon == null) { Debug.LogError("[MapNode_Z] Image hilang.", this); return; }
+        if (checkmarkSprite == null) { Debug.LogError("[MapNode_Z] Checkmark sprite kosong.", this); return; }
 
-        // Pastikan kelihatan
         icon.enabled = true;
-        icon.raycastTarget = false;                // biar hover tidak menghalangi node lain
-        icon.type = Image.Type.Simple;             // hindari 'Filled' = 0
+        icon.raycastTarget = false;
+        icon.type = Image.Type.Simple;
         icon.preserveAspect = true;
-        icon.color = new Color(0f, 1f, 0f, 1f);    // full alpha
+        icon.color = Color.green;
         icon.sprite = checkmarkSprite;
 
-        // Jika parent pakai Grid/Horizontal/Vertical Layout, SetNativeSize akan di-override.
-        // PILIH SALAH SATU:
-        // 1) Kalau TIDAK pakai LayoutGroup:
-        // icon.SetNativeSize();
-
-        // 2) Kalau pakai GridLayoutGroup (sepertinya kamu pakai 'GridContainer'):
-        // pakai sizeDelta sesuai cell (jangan SetNativeSize)
+        // Jangan SetNativeSize kalau pakai layout. Karena manual, boleh ukuran tetap.
         var rt = icon.rectTransform;
-        if (rt != null && rt.sizeDelta.magnitude < 1f)        // kalau kependek/0
-            rt.sizeDelta = new Vector2(80, 80);                // samakan dg cell GridLayoutGroup
+        if (rt.sizeDelta.magnitude < 1f) rt.sizeDelta = new Vector2(80, 80);
 
         gameObject.name = $"Node_{locationId}_DONE";
         Debug.Log($"[MapNode_Z] Node {locationId} ditandai Selesai ✅", this);

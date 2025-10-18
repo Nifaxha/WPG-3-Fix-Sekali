@@ -25,6 +25,12 @@ public class DummyCollision : MonoBehaviour
 
             Debug.Log($"<color=yellow>Menabrak DINDING. Total collision: {wallCollisionCount}</color>");
 
+            // === KURANGI HEALTH SEKALI SAAT MENABRAK ===
+            if (healthSystem != null)
+                healthSystem.TakeDamage(1);
+            else
+                Debug.LogWarning("[DummyCollision] healthSystem belum di-assign!");
+
             if (movementScript != null)
             {
                 movementScript.isBlocked = true;

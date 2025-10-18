@@ -51,6 +51,12 @@ public class PhotoManager : MonoBehaviour
     [Header("Audio Settings")]
     public AudioSource cameraAudioSource;
     public AudioClip cameraShutterSound;
+
+    // NEW — SFX untuk salah foto
+    [Tooltip("Suara yang diputar ketika salah mengambil foto")]
+    public AudioClip wrongPhotoSound;
+    [Tooltip("AudioSource untuk SFX (jika kosong, akan pakai cameraAudioSource)")]
+    public AudioSource sfxAudioSource;
     // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
     public static event System.Action<Vector2> OnPhotoTaken;
     public static event System.Action<int> OnPhotoTakenById;
@@ -72,6 +78,7 @@ public class PhotoManager : MonoBehaviour
     // ===================== NEW: HEALTH UI ======================
     [Header("Health Settings (UI)")]
     [Tooltip("Jumlah health maksimum (disarankan sama dengan Max Default Photo Fails)")]
+    public bool useHealthUI = false;   // NEW: kalau false, UI hati tidak di-update
     public int maxHealth = 3; // NEW
     private int currentHealth; // NEW
 
@@ -85,14 +92,18 @@ public class PhotoManager : MonoBehaviour
     private bool canTakePhoto = true;
     private Vector2 currentPlayerCoordinates;
 
-    void Start()
+
+    void Awake()
     {
-        // NEW: beri id berurutan agar konsisten dengan urutan list
         for (int i = 0; i < photoLocations.Count; i++)
             photoLocations[i].id = i;
-
-        InitializePhotoSystem();
     }
+
+    void Start()
+    {
+        InitializePhotoSystem();   // <- penting agar sfxAudioSource fallback di-set
+    }
+
 
     void Update()
     {
@@ -134,19 +145,25 @@ public class PhotoManager : MonoBehaviour
         if (cameraAudioSource == null)
             cameraAudioSource = GetComponent<AudioSource>();
 
+        // NEW: fallback SFX AudioSource
+        if (sfxAudioSource == null)
+            sfxAudioSource = cameraAudioSource;
+
         // Reset counters
         defaultPhotoFailCount = 0;
 
         // ===== NEW: sync health dengan fail counter =====
         // Disarankan maxHealth == maxDefaultPhotoFails agar konsisten
+
         if (maxHealth != maxDefaultPhotoFails)
         {
             Debug.LogWarning($"[PhotoManager] maxHealth ({maxHealth}) != maxDefaultPhotoFails ({maxDefaultPhotoFails}). " +
-                             $"Menyamakan keduanya untuk konsistensi.");
+                                $"Menyamakan keduanya untuk konsistensi.");
             maxHealth = maxDefaultPhotoFails;
         }
         currentHealth = maxHealth;
         UpdateHealthUI();
+
         // =================================================
 
         Debug.Log($"PhotoManager initialized. Locations: {photoLocations.Count}");
@@ -292,6 +309,13 @@ public class PhotoManager : MonoBehaviour
             StartCoroutine(HidePhotoAfterDelay(photoDisplayDuration));
         }
 
+        // === NEW: Suara salah foto ===
+        if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource; // fallback
+        if (sfxAudioSource != null && wrongPhotoSound != null)
+            sfxAudioSource.PlayOneShot(wrongPhotoSound);
+        else
+            Debug.LogWarning("[PhotoManager] wrongPhotoSound atau sfxAudioSource belum di-assign.");
+
         // ======= LOGIKA SALAH FOTO =======
         defaultPhotoFailCount = Mathf.Clamp(defaultPhotoFailCount + 1, 0, maxDefaultPhotoFails);
 
@@ -308,10 +332,49 @@ public class PhotoManager : MonoBehaviour
             monitorStatusText.gameObject.SetActive(true);
         }
 
-        if (currentHealth <= 0 || defaultPhotoFailCount >= maxDefaultPhotoFails)
-            TriggerGameOver();
+        if (defaultPhotoFailCount >= maxDefaultPhotoFails)
+        {
+            // Pada salah terakhir: tunggu SFX dulu baru pindah scene
+            StartCoroutine(GameOverAfterSfx());
+        }
         // =================================
     }
+
+    IEnumerator GameOverAfterSfx()
+    {
+        if (gameOverTriggered) yield break;
+        gameOverTriggered = true;
+        canTakePhoto = false;
+
+        if (monitorStatusText != null)
+            monitorStatusText.gameObject.SetActive(true);
+
+        onGameOver?.Invoke();
+
+        // Tunggu SFX salah (kalau ada)
+        float wait = 0f;
+        if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource;
+
+        if (sfxAudioSource != null && wrongPhotoSound != null)
+        {
+            // Kalau source belum diputar, putar sekali di sini (cadangan)
+            if (!sfxAudioSource.isPlaying)
+                sfxAudioSource.PlayOneShot(wrongPhotoSound);
+
+            // Cara aman: tunggu selama clip length atau sampai source berhenti
+            wait = Mathf.Max(wait, wrongPhotoSound.length);
+            float t = 0f;
+            while (t < wait && sfxAudioSource != null && sfxAudioSource.isPlaying)
+            {
+                t += Time.unscaledDeltaTime;   // jangan terpengaruh Time.timeScale
+                yield return null;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(gameOverSceneName))
+            SceneManager.LoadScene(gameOverSceneName);
+    }
+
 
     IEnumerator HidePhotoAfterDelay(float delay)
     {
