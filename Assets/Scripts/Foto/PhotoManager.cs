@@ -55,8 +55,14 @@ public class PhotoManager : MonoBehaviour
     // NEW — SFX untuk salah foto
     [Tooltip("Suara yang diputar ketika salah mengambil foto")]
     public AudioClip wrongPhotoSound;
+
+    // NEW — SFX salah per-urutan (index 0 = salah pertama, index 1 = salah kedua, dst.)
+    [Tooltip("Index 0 = salah ke-1, 1 = salah ke-2, 2 = salah ke-3, dst. Jika kosong, pakai fallback.")]
+    public AudioClip[] wrongPhotoSounds = new AudioClip[3];
+
     [Tooltip("AudioSource untuk SFX (jika kosong, akan pakai cameraAudioSource)")]
     public AudioSource sfxAudioSource;
+
     // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
     public static event System.Action<Vector2> OnPhotoTaken;
     public static event System.Action<int> OnPhotoTakenById;
@@ -193,6 +199,35 @@ public class PhotoManager : MonoBehaviour
         }
     }
 
+    private AudioClip GetWrongSfxClip(int failNumber)
+    {
+        // failNumber: 1-based (1,2,3,...)
+        if (wrongPhotoSounds != null && wrongPhotoSounds.Length > 0)
+        {
+            int idx = Mathf.Clamp(failNumber - 1, 0, wrongPhotoSounds.Length - 1);
+            var clip = wrongPhotoSounds[idx];
+            if (clip != null) return clip;
+        }
+        return wrongPhotoSound; // fallback
+    }
+
+    private void PlayWrongSfx(int failNumber)
+    {
+        if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource;
+
+        var clip = GetWrongSfxClip(failNumber);
+        if (sfxAudioSource != null && clip != null)
+        {
+            sfxAudioSource.PlayOneShot(clip);
+            Debug.Log($"[PhotoManager] Wrong SFX -> fail #{failNumber}, clip: {clip.name}");
+        }
+        else
+        {
+            Debug.LogWarning("[PhotoManager] SFX source/clip belum di-assign.");
+        }
+    }
+
+
     public void TakePhoto()
     {
         if (!canTakePhoto) return;
@@ -309,15 +344,23 @@ public class PhotoManager : MonoBehaviour
             StartCoroutine(HidePhotoAfterDelay(photoDisplayDuration));
         }
 
-        // === NEW: Suara salah foto ===
-        if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource; // fallback
-        if (sfxAudioSource != null && wrongPhotoSound != null)
-            sfxAudioSource.PlayOneShot(wrongPhotoSound);
-        else
-            Debug.LogWarning("[PhotoManager] wrongPhotoSound atau sfxAudioSource belum di-assign.");
+        // ====== PILIH CLIP BERDASARKAN SALAH KE-BERAPA ======
+        int nextFail = Mathf.Min(defaultPhotoFailCount + 1, maxDefaultPhotoFails);
 
-        // ======= LOGIKA SALAH FOTO =======
-        defaultPhotoFailCount = Mathf.Clamp(defaultPhotoFailCount + 1, 0, maxDefaultPhotoFails);
+        // Ambil clip sesuai urutan; kalau tidak ada → fallback
+        AudioClip clipToPlay = null;
+        if (wrongPhotoSounds != null && wrongPhotoSounds.Length > 0)
+        {
+            int idx = Mathf.Clamp(nextFail - 1, 0, wrongPhotoSounds.Length - 1);
+            clipToPlay = wrongPhotoSounds[idx];
+        }
+        if (clipToPlay == null) clipToPlay = wrongPhotoSound;
+
+        // === MAINKAN SUARA SALAH SESUAI URUTAN ===
+        PlayWrongSfx(nextFail);
+
+        // ====== NAIKKAN COUNTER & UPDATE UI ======
+        defaultPhotoFailCount = nextFail;
 
         // Kurangi health 1 step agar sinkron dengan fail counter
         currentHealth = Mathf.Clamp(maxHealth - defaultPhotoFailCount, 0, maxHealth);
@@ -332,15 +375,17 @@ public class PhotoManager : MonoBehaviour
             monitorStatusText.gameObject.SetActive(true);
         }
 
+        // ====== GAME OVER? TUNGGU SFX TERAKHIR DULU ======
         if (defaultPhotoFailCount >= maxDefaultPhotoFails)
         {
             // Pada salah terakhir: tunggu SFX dulu baru pindah scene
-            StartCoroutine(GameOverAfterSfx());
+            var lastClip = GetWrongSfxClip(defaultPhotoFailCount);
+            StartCoroutine(GameOverAfterSfx(lastClip));
         }
         // =================================
     }
 
-    IEnumerator GameOverAfterSfx()
+    IEnumerator GameOverAfterSfx(AudioClip clip = null)
     {
         if (gameOverTriggered) yield break;
         gameOverTriggered = true;
@@ -351,18 +396,18 @@ public class PhotoManager : MonoBehaviour
 
         onGameOver?.Invoke();
 
-        // Tunggu SFX salah (kalau ada)
-        float wait = 0f;
+        // Tentukan sumber dan clip yang ditunggu
         if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource;
+        AudioClip waitClip = clip != null ? clip : wrongPhotoSound;
 
-        if (sfxAudioSource != null && wrongPhotoSound != null)
+        float wait = 0f;
+        if (sfxAudioSource != null && waitClip != null)
         {
-            // Kalau source belum diputar, putar sekali di sini (cadangan)
+            // Jika belum diputar dari DisplayWhitePhoto (edge case), putar di sini
             if (!sfxAudioSource.isPlaying)
-                sfxAudioSource.PlayOneShot(wrongPhotoSound);
+                sfxAudioSource.PlayOneShot(waitClip);
 
-            // Cara aman: tunggu selama clip length atau sampai source berhenti
-            wait = Mathf.Max(wait, wrongPhotoSound.length);
+            wait = Mathf.Max(wait, waitClip.length);
             float t = 0f;
             while (t < wait && sfxAudioSource != null && sfxAudioSource.isPlaying)
             {

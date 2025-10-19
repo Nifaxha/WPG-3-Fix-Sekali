@@ -63,6 +63,9 @@ public class CoordinateButton3D_Interact : MonoBehaviour
     {
         if (isHeld && coordSystem != null)
         {
+            // NEW: blok jika lever sedang STOP
+            if (coordSystem.ControlsLocked) return;
+
             coordSystem.ChangeCoordinate(direction, speed);
         }
     }
@@ -70,6 +73,9 @@ public class CoordinateButton3D_Interact : MonoBehaviour
     public void PressButton()
     {
         if (isHeld) return;
+
+        // NEW: blok klik saat lever STOP
+        if (coordSystem != null && coordSystem.ControlsLocked) return;
 
         isHeld = true;
         AnimateButton(true);

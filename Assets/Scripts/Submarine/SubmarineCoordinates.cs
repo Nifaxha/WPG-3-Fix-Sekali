@@ -52,6 +52,19 @@ public class SubmarineCoordinates : MonoBehaviour
     [Header("Audio Fade Settings")]
     public float fadeSpeed = 2f;
 
+    // === NEW: Lock controls when lever is in STOP ===
+    [Header("Control Lock (by Lever)")]
+    public bool controlsLockedByLever = false;
+
+    // Akses baca-only untuk script lain
+    public bool ControlsLocked => controlsLockedByLever;
+
+    // Dipanggil tuas untuk kunci/buka kontrol
+    public void LockControlsFromLever(bool locked)
+    {
+        controlsLockedByLever = locked;
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -300,5 +313,36 @@ public class SubmarineCoordinates : MonoBehaviour
 
         if (textSpeed != null)
             textSpeed.text = $"Knot: {currentSpeed:F2}";
+    }
+
+    /// <summary>
+    /// Dipanggil tuas saat didorong ke depan untuk melanjutkan gerak setelah stop.
+    /// </summary>
+    public void ResumeFromLever()
+    {
+        // Lepas kondisi berhenti / blokir
+        isBlocked = false;
+        isBraking = false;
+        brakeTarget = 0f;
+
+        // Reset arah tabrakan agar cek aman bergerak tidak menganggap masih nempel
+        collisionNormal = Vector3.zero;
+
+        // NEW: buka kunci kontrol
+        controlsLockedByLever = false;
+
+        // Mulai dari diam; biarkan akselerasi mengambil alih
+        currentSpeed = 0f;
+
+        TriggerShake(0.01f, 0.1f);
+        Debug.Log("ResumeFromLever: Resume movement from lever forward.");
+    }
+
+    /// <summary>
+    /// Wrapper publik untuk memicu guncangan dari script lain (mis. tabrakan).
+    /// </summary>
+    public void BumpShake(float intensity = 0.08f, float duration = 0.25f)
+    {
+        TriggerShake(intensity, duration);
     }
 }

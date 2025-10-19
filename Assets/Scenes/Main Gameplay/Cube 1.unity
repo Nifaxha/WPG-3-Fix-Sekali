@@ -542,6 +542,7 @@ MonoBehaviour:
     m_Bits: 0
   checkRadius: 0.5
   fadeSpeed: 2
+  controlsLockedByLever: 0
 --- !u!82 &186879530
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7765,6 +7766,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 15.13
       objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7065616
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7065616
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.027760837
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.027760837
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -85.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -2535205073996030885, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: -1626254660621716922, guid: 1d9d439d56af4ed4da6754188d05062c, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -8945,6 +8974,10 @@ MonoBehaviour:
   cameraAudioSource: {fileID: 1472445063}
   cameraShutterSound: {fileID: 8300000, guid: 1dfacb9103ffeed4281c83686f96944b, type: 3}
   wrongPhotoSound: {fileID: 8300000, guid: c055192c45a3af046b6c4f0872800b33, type: 3}
+  wrongPhotoSounds:
+  - {fileID: 8300000, guid: c055192c45a3af046b6c4f0872800b33, type: 3}
+  - {fileID: 8300000, guid: a02d8d01cdb9f404ebcb53287141d402, type: 3}
+  - {fileID: 8300000, guid: 8a6414ca266923a4aa1fe9ee63aeeebb, type: 3}
   sfxAudioSource: {fileID: 1472445063}
   maxDefaultPhotoFails: 3
   gameOverSceneName: Main Menu
@@ -10964,11 +10997,12 @@ MonoBehaviour:
   xWhenForward: -85.5
   xWhenBackward: 0.691
   degreesPerSecond: 180
+  backwardIsStop: 1
   emergencyStop: 0
   highlightRenderer: {fileID: 0}
   highlightColor: {r: 1, g: 1, b: 1, a: 0}
   leverAudioSource: {fileID: 0}
-  leverMoveSound: {fileID: 0}
+  leverMoveSound: {fileID: 8300000, guid: 1e471fbda0092c840ab5471d0a231954, type: 3}
 --- !u!64 &1872849201
 MeshCollider:
   m_ObjectHideFlags: 0

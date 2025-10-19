@@ -1,11 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StopLever3D_Interact : MonoBehaviour
 {
     [Header("Lever X Rotation (deg)")]
-    public float xWhenForward = -85.5f;   // posisi MAJU
+    public float xWhenForward = -85.5f;   // posisi MAJU (DEfault)
     public float xWhenBackward = 0.691f;  // posisi MUNDUR/NETRAL
     public float degreesPerSecond = 180f;
+
+    [Header("Meaning")]
+    public bool backwardIsStop = true;    // ✅ kalau rig-mu kebalik, ubah ini jadi false
 
     [Header("Stop Behaviour")]
     public bool emergencyStop = true;
@@ -20,7 +23,7 @@ public class StopLever3D_Interact : MonoBehaviour
     public AudioClip leverMoveSound;
 
     private SubmarineCoordinates coordSystem;
-    private bool isForward;
+    private bool isForward;  //Default maju
     private bool isMoving;
     private bool isHighlighted;
     private float fixedY, fixedZ;
@@ -32,6 +35,11 @@ public class StopLever3D_Interact : MonoBehaviour
 
         var e = transform.localEulerAngles;
         fixedY = e.y; fixedZ = e.z; currentX = e.x;
+
+        // NEW: paksa pose awal ke MAJU secara visual & data
+        currentX = xWhenForward;
+        transform.localEulerAngles = new Vector3(currentX, fixedY, fixedZ);
+        isForward = true;
 
         if (!leverAudioSource)
         {
@@ -46,6 +54,8 @@ public class StopLever3D_Interact : MonoBehaviour
 
         if (!highlightRenderer) highlightRenderer = GetComponentInChildren<Renderer>();
         if (highlightRenderer) _normalColor = highlightRenderer.material.color;
+
+        ApplyLockForTarget(isForward);
     }
 
     void Update()
@@ -63,15 +73,33 @@ public class StopLever3D_Interact : MonoBehaviour
 
     private void ToggleLever()
     {
-        isForward = !isForward;
+        isForward = !isForward;   // pindah target
         isMoving = true;
 
-        if (leverAudioSource && leverMoveSound) leverAudioSource.PlayOneShot(leverMoveSound);
+        if (leverAudioSource && leverMoveSound)
+            leverAudioSource.PlayOneShot(leverMoveSound);
 
-        if (coordSystem && isForward)
+        ApplyLockForTarget(isForward);
+    }
+
+    // 🧠 Atur lock sesuai target: jika target = "posisi STOP", kunci; jika target = "maju", buka
+    private void ApplyLockForTarget(bool targetIsForward)
+    {
+        if (!coordSystem) return;
+
+        bool goingToStop = backwardIsStop ? !targetIsForward : targetIsForward;
+
+        if (goingToStop)
         {
             if (emergencyStop) coordSystem.EmergencyStop();
             else coordSystem.GradualStop();
+
+            coordSystem.LockControlsFromLever(true);   // kunci tombol
+        }
+        else
+        {
+            coordSystem.LockControlsFromLever(false);  // buka tombol
+            coordSystem.ResumeFromLever();             // lanjut jalan
         }
     }
 
