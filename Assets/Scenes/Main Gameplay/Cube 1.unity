@@ -8975,15 +8975,17 @@ MonoBehaviour:
   cameraShutterSound: {fileID: 8300000, guid: 1dfacb9103ffeed4281c83686f96944b, type: 3}
   wrongPhotoSound: {fileID: 8300000, guid: c055192c45a3af046b6c4f0872800b33, type: 3}
   wrongPhotoSounds:
-  - {fileID: 8300000, guid: c055192c45a3af046b6c4f0872800b33, type: 3}
-  - {fileID: 8300000, guid: a02d8d01cdb9f404ebcb53287141d402, type: 3}
-  - {fileID: 8300000, guid: 8a6414ca266923a4aa1fe9ee63aeeebb, type: 3}
+  - {fileID: 8300000, guid: 8c3029827eb9d714d861cdc454fe3293, type: 3}
+  - {fileID: 8300000, guid: 904ce3ae7400eb449a3633666856c9bd, type: 3}
+  - {fileID: 8300000, guid: f377ec857ec827a4cacb9c3a35015fb8, type: 3}
   sfxAudioSource: {fileID: 1472445063}
   maxDefaultPhotoFails: 3
   gameOverSceneName: Main Menu
   onGameOver:
     m_PersistentCalls:
       m_Calls: []
+  allPhotosCompleteSceneName: Main Menu
+  delayBeforeWinScene: 2
   useHealthUI: 0
   maxHealth: 3
   healthIcons:

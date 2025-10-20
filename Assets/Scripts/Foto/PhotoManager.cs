@@ -81,6 +81,14 @@ public class PhotoManager : MonoBehaviour
     private int defaultPhotoFailCount = 0;
     private bool gameOverTriggered = false;
 
+    [Header("Mission Complete Settings")]
+    [Tooltip("Nama scene yang akan dimuat jika semua photo location sudah berhasil diambil.")]
+    public string allPhotosCompleteSceneName = "WinScene";
+
+    [Tooltip("Delay sebelum pindah ke scene setelah semua foto berhasil diambil.")]
+    public float delayBeforeWinScene = 2f;
+
+
     // ===================== NEW: HEALTH UI ======================
     [Header("Health Settings (UI)")]
     [Tooltip("Jumlah health maksimum (disarankan sama dengan Max Default Photo Fails)")]
@@ -108,6 +116,8 @@ public class PhotoManager : MonoBehaviour
     void Start()
     {
         InitializePhotoSystem();   // <- penting agar sfxAudioSource fallback di-set
+        if (AreAllLocationsPhotographed() && !IsGameOver())
+            StartCoroutine(LoadGameOverAfter(0f));
     }
 
 
@@ -291,6 +301,44 @@ public class PhotoManager : MonoBehaviour
         return null;
     }
 
+
+    // Semua lokasi (yang punya sprite) sudah difoto?
+    private bool AreAllLocationsPhotographed()
+    {
+        if (photoLocations == null || photoLocations.Count == 0) return false;
+
+        foreach (var loc in photoLocations)
+        {
+            if (loc == null) continue;
+            if (loc.photoSprite == null) continue; // slot kosong tidak dihitung
+            if (!loc.hasBeenPhotographed) return false;
+        }
+        return true;
+    }
+
+    private IEnumerator LoadAllPhotosCompleteSceneAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (!string.IsNullOrEmpty(allPhotosCompleteSceneName))
+        {
+            Debug.Log($"[PhotoManager] Semua foto berhasil diambil! Pindah ke scene: {allPhotosCompleteSceneName}");
+            SceneManager.LoadScene(allPhotosCompleteSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("[PhotoManager] allPhotosCompleteSceneName belum diisi di Inspector!");
+        }
+    }
+
+
+    // Tunda pindah scene agar foto terakhir sempat tampil
+    private IEnumerator LoadGameOverAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        TriggerGameOver(); // pakai method kamu yang sudah ada
+    }
+
     void DisplayLocationPhoto(PhotoLocation location)
     {
         if (monitorPhotoDisplay != null)
@@ -317,6 +365,15 @@ public class PhotoManager : MonoBehaviour
                 // NEW: cocokkan by ID (anti mismatch)
                 OnPhotoTakenById?.Invoke(location.id);
             }
+            // --- CEK: semua lokasi sudah beres? ---
+            // === CEK: semua lokasi sudah difoto ===
+            if (AreAllLocationsPhotographed() && !IsGameOver())
+            {
+                Debug.Log("[PhotoManager] Semua lokasi berhasil difoto. Menuju ke scene kemenangan...");
+                StartCoroutine(LoadAllPhotosCompleteSceneAfterDelay(delayBeforeWinScene));
+            }
+
+
             StartCoroutine(HideMonitorPhotoAfterDelay(photoDisplayDuration));
         }
         else if (photoDisplayUI != null)

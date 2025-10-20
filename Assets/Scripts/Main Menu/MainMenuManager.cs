@@ -26,6 +26,13 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         OpenMenu(_MainMenuContainer);
+
+        // Paksa kursor tampil & bebas di Main Menu
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        // (opsional) kalau gameplay pernah pause
+        Time.timeScale = 1f;
     }
     public void OpenCreditsMenu()
     {
