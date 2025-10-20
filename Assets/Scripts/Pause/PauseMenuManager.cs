@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    [Header("UI Mode")]
+    public bool useWorldSpace = false;          // default: off (pakai setting Inspector apa adanya)
+    public Vector3 worldCanvasScale = new Vector3(0.002f, 0.002f, 0.002f); // dipakai hanya jika World Space
+
     [Header("UI (World-Space Canvas)")]
     public Canvas pauseCanvas;          // World Space canvas (root)
     public GameObject mainPanel;        // Panel berisi tombol Resume/Settings/Leave
@@ -24,14 +28,28 @@ public class PauseMenuManager : MonoBehaviour
 
     void Start()
     {
+        // auto isi kamera kalau kosong
         if (!playerCamera && Camera.main) playerCamera = Camera.main.transform;
+
         if (pauseCanvas)
         {
-            pauseCanvas.renderMode = RenderMode.WorldSpace;
-            var rt = pauseCanvas.GetComponent<RectTransform>();
-            rt.sizeDelta = canvasSize;
+            // HANYA set ke World Space kalau kamu memilihnya
+            if (useWorldSpace)
+            {
+                pauseCanvas.renderMode = RenderMode.WorldSpace;
+                var rt = pauseCanvas.GetComponent<RectTransform>();
+                // ukuran kertas world-space (boleh kamu hapus kalau sudah rapi di inspector)
+                rt.sizeDelta = canvasSize;
+                pauseCanvas.transform.localScale = worldCanvasScale;
+
+                // Kalau pakai World Space, pastikan Event Camera terisi
+                if (pauseCanvas.worldCamera == null && playerCamera)
+                    pauseCanvas.worldCamera = playerCamera.GetComponent<Camera>();
+            }
+            // Kalau useWorldSpace = false → JANGAN sentuh renderMode (biarkan Screen Space Overlay)
             pauseCanvas.gameObject.SetActive(false);
         }
+
         if (mainPanel) mainPanel.SetActive(false);
         if (settingsPanel) settingsPanel.SetActive(false);
     }
@@ -63,22 +81,23 @@ public class PauseMenuManager : MonoBehaviour
 
         prevTimeScale = Time.timeScale;
         Time.timeScale = 0f;
-        AudioListener.pause = true; // hentikan semua suara
+        AudioListener.pause = true;
 
         if (pauseCanvas) pauseCanvas.gameObject.SetActive(true);
         if (mainPanel) mainPanel.SetActive(true);
         if (settingsPanel) settingsPanel.SetActive(false);
 
-        if (playerCamera && pauseCanvas)
+        // HANYA atur posisi/rotasi jika canvanya memang World Space
+        if (pauseCanvas && pauseCanvas.renderMode == RenderMode.WorldSpace && playerCamera)
         {
             var t = pauseCanvas.transform;
             t.position = playerCamera.position + playerCamera.forward * distance;
-            if (faceCamera) t.rotation = Quaternion.LookRotation(playerCamera.forward, playerCamera.up);
+            if (faceCamera)
+                t.rotation = Quaternion.LookRotation(playerCamera.forward, playerCamera.up);
         }
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        if (dotCrosshair) dotCrosshair.SetActive(false);
 
         foreach (var c in controlsToDisable)
             if (c) c.enabled = false;
