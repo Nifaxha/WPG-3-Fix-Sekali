@@ -1,79 +1,110 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PauseMenuManager : MonoBehaviour
 {
     [Header("UI Mode")]
-    public bool useWorldSpace = false;          // default: off (pakai setting Inspector apa adanya)
-    public Vector3 worldCanvasScale = new Vector3(0.002f, 0.002f, 0.002f); // dipakai hanya jika World Space
+    public bool useWorldSpace = false;
+    public Vector3 worldCanvasScale = new Vector3(0.002f, 0.002f, 0.002f);
 
     [Header("UI (World-Space Canvas)")]
-    public Canvas pauseCanvas;          // World Space canvas (root)
-    public GameObject mainPanel;        // Panel berisi tombol Resume/Settings/Leave
-    public GameObject settingsPanel;    // Panel settings (berisi slider volume)
+    public Canvas pauseCanvas;
+    public GameObject mainPanel;
+    public GameObject settingsPanel;
 
     [Header("Popup Placement")]
-    public Transform playerCamera;      // drag Main Camera
-    public float distance = 1.2f;       // jarak di depan kamera
-    public Vector2 canvasSize = new Vector2(600, 800); // lebar x tinggi canvas (unit world)
+    public Transform playerCamera;
+    public float distance = 1.2f;
+    public Vector2 canvasSize = new Vector2(600, 800);
     public bool faceCamera = true;
 
     [Header("Integration")]
-    public MonoBehaviour[] controlsToDisable; // PlayerLook / Motor / Interactor dll.
-    public GameObject dotCrosshair;     // crosshair/dot (opsional)
+    public MonoBehaviour[] controlsToDisable;
+    public GameObject dotCrosshair;
     public string mainMenuSceneName = "Main Menu";
 
     bool isPaused;
     float prevTimeScale = 1f;
+    Coroutine cursorFixCoroutine;
 
     void Start()
     {
-        // auto isi kamera kalau kosong
         if (!playerCamera && Camera.main) playerCamera = Camera.main.transform;
 
         if (pauseCanvas)
         {
-            // HANYA set ke World Space kalau kamu memilihnya
             if (useWorldSpace)
             {
                 pauseCanvas.renderMode = RenderMode.WorldSpace;
                 var rt = pauseCanvas.GetComponent<RectTransform>();
-                // ukuran kertas world-space (boleh kamu hapus kalau sudah rapi di inspector)
                 rt.sizeDelta = canvasSize;
                 pauseCanvas.transform.localScale = worldCanvasScale;
 
-                // Kalau pakai World Space, pastikan Event Camera terisi
                 if (pauseCanvas.worldCamera == null && playerCamera)
                     pauseCanvas.worldCamera = playerCamera.GetComponent<Camera>();
             }
-            // Kalau useWorldSpace = false → JANGAN sentuh renderMode (biarkan Screen Space Overlay)
+
             pauseCanvas.gameObject.SetActive(false);
         }
 
         if (mainPanel) mainPanel.SetActive(false);
         if (settingsPanel) settingsPanel.SetActive(false);
+
+        // pastikan awalnya cursor terkunci
+        SetCursorLocked(true);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            TogglePause();
+        // 🔹 ESC hanya berfungsi untuk membuka Pause (bukan menutup)
+        if (Input.GetKeyDown(KeyCode.Escape) && !isPaused)
+        {
+            Pause();
+        }
 
         if (isPaused && pauseCanvas && playerCamera)
         {
-            // jaga posisi di depan kamera
             var t = pauseCanvas.transform;
             t.position = playerCamera.position + playerCamera.forward * distance;
-            if (faceCamera) t.rotation = Quaternion.LookRotation(playerCamera.forward, playerCamera.up);
+            if (faceCamera)
+                t.rotation = Quaternion.LookRotation(playerCamera.forward, playerCamera.up);
+        }
+
+        // jika UI pause dimatikan dari luar, otomatis resume
+        if (isPaused && pauseCanvas && !pauseCanvas.gameObject.activeSelf)
+        {
+            ForceResumeCleanup();
         }
     }
 
-    public void TogglePause()
+    // === UTILS ===
+    void SetCursorLocked(bool locked)
     {
-        if (isPaused) Resume();
-        else Pause();
+        if (locked)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            if (dotCrosshair) dotCrosshair.SetActive(true);
+        }
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            if (dotCrosshair) dotCrosshair.SetActive(false);
+        }
     }
 
+    IEnumerator EnforceCursorLockFrames(int frames = 4)
+    {
+        for (int i = 0; i < frames; i++)
+        {
+            SetCursorLocked(true);
+            yield return null; // paksa di setiap frame
+        }
+    }
+
+    // === CORE ===
     public void Pause()
     {
         if (isPaused) return;
@@ -87,7 +118,7 @@ public class PauseMenuManager : MonoBehaviour
         if (mainPanel) mainPanel.SetActive(true);
         if (settingsPanel) settingsPanel.SetActive(false);
 
-        // HANYA atur posisi/rotasi jika canvanya memang World Space
+        // atur posisi kalau World Space
         if (pauseCanvas && pauseCanvas.renderMode == RenderMode.WorldSpace && playerCamera)
         {
             var t = pauseCanvas.transform;
@@ -96,8 +127,7 @@ public class PauseMenuManager : MonoBehaviour
                 t.rotation = Quaternion.LookRotation(playerCamera.forward, playerCamera.up);
         }
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        SetCursorLocked(false); // tampilkan cursor
 
         foreach (var c in controlsToDisable)
             if (c) c.enabled = false;
@@ -115,28 +145,42 @@ public class PauseMenuManager : MonoBehaviour
         if (mainPanel) mainPanel.SetActive(false);
         if (settingsPanel) settingsPanel.SetActive(false);
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        if (dotCrosshair) dotCrosshair.SetActive(true);
+        SetCursorLocked(true); // langsung kunci cursor
+
+        // paksa lock beberapa frame biar gak diubah skrip lain (mis. MapController2)
+        if (cursorFixCoroutine != null) StopCoroutine(cursorFixCoroutine);
+        cursorFixCoroutine = StartCoroutine(EnforceCursorLockFrames(5));
 
         foreach (var c in controlsToDisable)
             if (c) c.enabled = true;
     }
 
-    // ===== hooked by buttons =====
+    void ForceResumeCleanup()
+    {
+        isPaused = false;
+        Time.timeScale = prevTimeScale <= 0f ? 1f : prevTimeScale;
+        AudioListener.pause = false;
+        SetCursorLocked(true);
+        foreach (var c in controlsToDisable) if (c) c.enabled = true;
+    }
+
+    // === UI Buttons ===
     public void OnResumeButton() => Resume();
+
     public void OnSettingsButton()
     {
         if (!isPaused) return;
         if (mainPanel) mainPanel.SetActive(false);
         if (settingsPanel) settingsPanel.SetActive(true);
     }
+
     public void OnBackFromSettings()
     {
         if (!isPaused) return;
         if (settingsPanel) settingsPanel.SetActive(false);
         if (mainPanel) mainPanel.SetActive(true);
     }
+
     public void OnLeaveGameButton()
     {
         Time.timeScale = 1f;
