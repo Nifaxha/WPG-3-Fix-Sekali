@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 99780286}
   - component: {fileID: 99780285}
   - component: {fileID: 99780284}
+  - component: {fileID: 99780287}
   m_Layer: 0
   m_Name: Lantai (1)
   m_TagString: Untagged
@@ -346,6 +347,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 99780282}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &99780287
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99780282}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 2.220446e-16, z: 10}
+  m_Center: {x: 0.000015258789, y: 0, z: -0.00000047683716}
 --- !u!1 &220847491
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,6 +472,7 @@ GameObject:
   - component: {fileID: 279836016}
   - component: {fileID: 279836015}
   - component: {fileID: 279836014}
+  - component: {fileID: 279836017}
   m_Layer: 0
   m_Name: Dinding Belakang
   m_TagString: Untagged
@@ -543,6 +566,132 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 279836012}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &279836017
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279836012}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 1, z: 1.0000002}
+  m_Center: {x: 0.00000008940697, y: 0, z: 0}
+--- !u!1001 &283852836
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 896.4063
+      objectReference: {fileID: 0}
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 896.40625
+      objectReference: {fileID: 0}
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 896.4063
+      objectReference: {fileID: 0}
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.7657
+      objectReference: {fileID: 0}
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2822
+      objectReference: {fileID: 0}
+    - target: {fileID: 2919032565669097405, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.1736
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 616.2653
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 616.2653
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 616.2653
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.669
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.265
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760593915381149642, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.143
+      objectReference: {fileID: 0}
+    - target: {fileID: 7214799068192968384, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_Name
+      value: tuas 2 update
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -109.569
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 261.868
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.902
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.50707924
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4928191
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.5070792
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.49281907
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028736343066956922, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -88.366
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0ec10677a1f413349852af072b25a533, type: 3}
 --- !u!1 &491040011
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,6 +704,7 @@ GameObject:
   - component: {fileID: 491040015}
   - component: {fileID: 491040014}
   - component: {fileID: 491040013}
+  - component: {fileID: 491040016}
   m_Layer: 0
   m_Name: Dinding Kanan
   m_TagString: Untagged
@@ -648,6 +798,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491040011}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &491040016
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491040011}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: -0.0000038146973}
 --- !u!1 &653696997
 GameObject:
   m_ObjectHideFlags: 0
@@ -694,6 +865,7 @@ GameObject:
   - component: {fileID: 677335774}
   - component: {fileID: 677335773}
   - component: {fileID: 677335772}
+  - component: {fileID: 677335775}
   m_Layer: 0
   m_Name: Dinding Pintu Kiri
   m_TagString: Untagged
@@ -787,6 +959,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677335770}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &677335775
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677335770}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 1, z: 1.0000002}
+  m_Center: {x: -0.00000016018748, y: 0, z: 0}
 --- !u!1 &759283362
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,6 +992,7 @@ GameObject:
   - component: {fileID: 759283366}
   - component: {fileID: 759283365}
   - component: {fileID: 759283364}
+  - component: {fileID: 759283367}
   m_Layer: 0
   m_Name: Dinding Pintu Kanan
   m_TagString: Untagged
@@ -892,6 +1086,129 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759283362}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &759283367
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759283362}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 1, z: 1.0000002}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &961389578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 961389582}
+  - component: {fileID: 961389581}
+  - component: {fileID: 961389580}
+  - component: {fileID: 961389579}
+  m_Layer: 5
+  m_Name: HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &961389579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961389578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &961389580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961389578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &961389581
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961389578}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &961389582
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961389578}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1583777937}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &977598851
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,6 +1255,7 @@ GameObject:
   - component: {fileID: 1008843495}
   - component: {fileID: 1008843494}
   - component: {fileID: 1008843493}
+  - component: {fileID: 1008843496}
   m_Layer: 0
   m_Name: Dinding Kanan
   m_TagString: Untagged
@@ -1031,6 +1349,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008843491}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1008843496
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008843491}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.0000038146973, z: -0.0000038146973}
 --- !u!1 &1028698285
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,6 +1382,7 @@ GameObject:
   - component: {fileID: 1028698289}
   - component: {fileID: 1028698288}
   - component: {fileID: 1028698287}
+  - component: {fileID: 1028698290}
   m_Layer: 0
   m_Name: Lantai
   m_TagString: Untagged
@@ -1137,22 +1477,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028698285}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1180227306
-MonoBehaviour:
+--- !u!65 &1028698290
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1764061138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1412bd6c8b2bb42a3c2386fd7d3437, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactDistance: 14
-  interactableLayer:
+  m_GameObject: {fileID: 1028698285}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 2.220446e-16, z: 10}
+  m_Center: {x: -0.0000038146973, y: 0, z: 0}
 --- !u!1 &1217856365
 GameObject:
   m_ObjectHideFlags: 0
@@ -1201,6 +1546,7 @@ GameObject:
   - component: {fileID: 1451913782}
   - component: {fileID: 1451913781}
   - component: {fileID: 1451913780}
+  - component: {fileID: 1451913783}
   m_Layer: 0
   m_Name: Dinding Pintu Kiri
   m_TagString: Untagged
@@ -1294,6 +1640,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1451913778}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1451913783
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451913778}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000001, y: 1, z: 1.0000002}
+  m_Center: {x: -0.00000020861626, y: 0, z: 0}
 --- !u!1 &1505860499
 GameObject:
   m_ObjectHideFlags: 0
@@ -1306,6 +1673,7 @@ GameObject:
   - component: {fileID: 1505860503}
   - component: {fileID: 1505860502}
   - component: {fileID: 1505860501}
+  - component: {fileID: 1505860504}
   m_Layer: 0
   m_Name: Dinding Pintu Atas
   m_TagString: Untagged
@@ -1399,6 +1767,102 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1505860499}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1505860504
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505860499}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 0.99999994, z: 1.0000002}
+  m_Center: {x: 0.00000023841858, y: 0, z: 0}
+--- !u!1 &1583777936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1583777937}
+  - component: {fileID: 1583777939}
+  - component: {fileID: 1583777938}
+  m_Layer: 5
+  m_Name: Crosshair
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1583777937
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583777936}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 961389582}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1583777938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583777936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: d726a24ebb9d2464b9a7b39981d3a9ea, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1583777939
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583777936}
+  m_CullTransparentMesh: 1
 --- !u!1 &1643834479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1446,6 +1910,7 @@ GameObject:
   - component: {fileID: 1745278190}
   - component: {fileID: 1745278189}
   - component: {fileID: 1745278188}
+  - component: {fileID: 1745278191}
   m_Layer: 0
   m_Name: Dinding Pintu Kanan
   m_TagString: Untagged
@@ -1539,6 +2004,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1745278186}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1745278191
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745278186}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000001, y: 1, z: 1.0000002}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1764061137
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1551,17 +2037,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1926471363004793577, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2628
+      objectReference: {fileID: 0}
+    - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2628
+      objectReference: {fileID: 0}
+    - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2628
+      objectReference: {fileID: 0}
     - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -121.44
       objectReference: {fileID: 0}
     - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 263.3
+      value: 263.5627
       objectReference: {fileID: 0}
     - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.247
+      value: -3.3784
       objectReference: {fileID: 0}
     - target: {fileID: 3163438954933364271, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1591,19 +2093,43 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6000061
+      objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5975886589046036373, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1926471363004793577, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1764061144}
+      addedObject: {fileID: 1764061151}
     - targetCorrespondingSourceObject: {fileID: 1926471363004793577, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1764061143}
+      addedObject: {fileID: 1764061150}
     - targetCorrespondingSourceObject: {fileID: 1926471363004793577, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1764061142}
+      addedObject: {fileID: 1764061149}
     - targetCorrespondingSourceObject: {fileID: 1926471363004793577, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1764061141}
@@ -1612,7 +2138,7 @@ PrefabInstance:
       addedObject: {fileID: 1764061139}
     - targetCorrespondingSourceObject: {fileID: 1008859160866742655, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1180227306}
+      addedObject: {fileID: 1849147032}
   m_SourcePrefab: {fileID: 100100000, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
 --- !u!1 &1764061138 stripped
 GameObject:
@@ -1691,7 +2217,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1764061142
+--- !u!114 &1764061149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1700,13 +2226,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1764061140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa1fce03357a632468386107f4812311, type: 3}
+  m_Script: {fileID: 11500000, guid: 45ae8d7bb7f7a7f4d8ba67202b6a798d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
+  cam: {fileID: 1849147029}
   xSensitivity: 20
   ySensitivity: 20
---- !u!114 &1764061143
+--- !u!114 &1764061150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1715,14 +2241,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1764061140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e23b01b89dade149bfe297ff27a1643, type: 3}
+  m_Script: {fileID: 11500000, guid: e0f710d1d2928754981e36996c1fa4ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   crouchTimer: 1
   speed: 5
   gravity: -9.8
   jumpHeight: 3
---- !u!114 &1764061144
+--- !u!114 &1764061151
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1731,7 +2257,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1764061140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd289f0259df08d429c982b197abd0b7, type: 3}
+  m_Script: {fileID: 11500000, guid: 9498917592229804b964bc577ff9830f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1842953898
@@ -1746,6 +2272,7 @@ GameObject:
   - component: {fileID: 1842953901}
   - component: {fileID: 1842953900}
   - component: {fileID: 1842953899}
+  - component: {fileID: 1842953903}
   m_Layer: 0
   m_Name: 'Dinding Kiri '
   m_TagString: Untagged
@@ -1839,6 +2366,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1217856366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1842953903
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842953898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0.00000047683716}
+--- !u!20 &1849147029 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7031176824837148869, guid: 6730a27f5e3228a4480bec1c39c29f4b, type: 3}
+  m_PrefabInstance: {fileID: 1764061137}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1849147032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764061138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69c70279c63f99741b71be550f21e1c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactDistance: 14
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1933481387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1851,6 +2420,7 @@ GameObject:
   - component: {fileID: 1933481391}
   - component: {fileID: 1933481390}
   - component: {fileID: 1933481389}
+  - component: {fileID: 1933481392}
   m_Layer: 0
   m_Name: Dinding Pintu Atas
   m_TagString: Untagged
@@ -1944,6 +2514,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933481387}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1933481392
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933481387}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 0.99999994, z: 1.0000002}
+  m_Center: {x: 0.00000035762787, y: -0.000015258789, z: 0}
 --- !u!1 &2117599569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,6 +2547,7 @@ GameObject:
   - component: {fileID: 2117599573}
   - component: {fileID: 2117599572}
   - component: {fileID: 2117599571}
+  - component: {fileID: 2117599574}
   m_Layer: 0
   m_Name: Dinding Kiri
   m_TagString: Untagged
@@ -2049,6 +2641,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2117599569}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2117599574
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117599569}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: -0.0000009536743}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2058,3 +2671,5 @@ SceneRoots:
   - {fileID: 1764061137}
   - {fileID: 1217856366}
   - {fileID: 1643834480}
+  - {fileID: 961389582}
+  - {fileID: 283852836}
