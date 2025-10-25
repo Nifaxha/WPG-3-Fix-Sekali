@@ -111,11 +111,20 @@ public class SubmarineCoordinates : MonoBehaviour
             }
         }
 
-        // Posisi maju-mundur pakai currentSpeed
-        currentZ += currentSpeed * Time.fixedDeltaTime;
+        // --- Arah hadap kapal (berdasarkan rotasi Y) ---
+        Vector3 forwardDir = transform.forward;
+        forwardDir.y = 0f; // pastikan tetap di bidang horizontal
+        forwardDir.Normalize();
+
+        // --- Update koordinat berdasarkan currentSpeed ---
+        currentX += forwardDir.x * currentSpeed * Time.fixedDeltaTime;
+        currentZ += forwardDir.z * currentSpeed * Time.fixedDeltaTime;
+
+        // --- Terapkan posisi baru ke Rigidbody ---
         Vector3 newPosition = new Vector3(currentX, rb.position.y, currentZ);
         rb.MovePosition(newPosition);
     }
+
 
     void Update()
     {
@@ -173,62 +182,44 @@ public class SubmarineCoordinates : MonoBehaviour
             return;
         }
 
-        float nextX = currentX;
-        float nextZ = currentZ;
-        Vector3 moveDirection = Vector3.zero;
-
         switch (direction)
         {
-            case "Left":
-                moveDirection = -transform.right; // Arah kiri dalam world space
-                nextX -= speed * Time.deltaTime;
-                break;
-            case "Right":
-                moveDirection = transform.right; // Arah kanan dalam world space
-                nextX += speed * Time.deltaTime;
-                break;
             case "Forward":
-                // Cek apakah gerakan maju aman
-                if (isBlocked && !IsSafeToMove(transform.forward))
-                {
-                    Debug.Log("<color=yellow>Tidak bisa maju! Terhalang dinding.</color>");
-                    TriggerShake(0.05f, 0.2f);
-                    return;
-                }
+                // Tambah kecepatan maju
                 IncreaseSpeed();
-                return;
+                break;
+
             case "Backward":
-                // Mundur biasanya selalu aman (menjauhi collision)
+                // Tambah kecepatan mundur
                 DecreaseSpeed();
-                return;
-        }
+                break;
 
-        // Untuk gerakan kiri/kanan, cek collision
-        if (direction == "Left" || direction == "Right")
-        {
-            // Cek dengan collision normal
-            if (isBlocked && !IsSafeToMove(moveDirection))
-            {
-                Debug.Log($"<color=yellow>Tidak bisa bergerak {direction}! Terhalang dinding.</color>");
-                TriggerShake(0.05f, 0.2f);
-                return;
-            }
+            case "Left":
+                // Rotasi kapal ke kiri (yaw negatif)
+                RotateSubmarine(-speed);
+                break;
 
-            // Cek dengan sphere cast (wall layer check)
-            Vector3 nextPos = new Vector3(nextX, rb.position.y, nextZ);
-            if (!Physics.CheckSphere(nextPos, checkRadius, wallLayer))
-            {
-                currentX = nextX;
-                currentZ = nextZ;
-                TriggerShake(0.01f, 0.1f);
-            }
-            else
-            {
-                TriggerShake(0.05f, 0.2f);
-                Debug.Log("Blocked by wall (sphere check)!");
-            }
+            case "Right":
+                // Rotasi kapal ke kanan (yaw positif)
+                RotateSubmarine(speed);
+                break;
         }
     }
+
+    public float rotationSpeed = 15f; // semula 30f, kita turunkan biar tidak tajam
+
+    private float targetYaw;
+
+    private void RotateSubmarine(float yawInput)
+    {
+        targetYaw += yawInput * rotationSpeed * Time.deltaTime;
+        float smoothYaw = Mathf.LerpAngle(transform.eulerAngles.y, targetYaw, Time.deltaTime * 2f);
+        transform.eulerAngles = new Vector3(0, smoothYaw, 0);
+        TriggerShake(0.008f, 0.12f);
+    }
+
+
+
 
     public void TriggerShake(float intensity = -1f, float duration = -1f)
     {
