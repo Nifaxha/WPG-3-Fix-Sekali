@@ -13,7 +13,7 @@ public class PlayerMotor2 : MonoBehaviour
     public float crouchTimer = 1;
     public float speed = 5f;
     public float gravity = -9.8f;
-    public float jumpHeight = 3f;
+    public float jumpHeight = 0.5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +57,7 @@ public class PlayerMotor2 : MonoBehaviour
     {
         if  (isGrounded)
         {
-            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            playerVelocity.y = Mathf.Sqrt(jumpHeight * -0.5f * gravity);
         }
     }
     public void Crouch()
