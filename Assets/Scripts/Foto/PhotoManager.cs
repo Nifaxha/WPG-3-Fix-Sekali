@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 [System.Serializable]
 public class PhotoLocation
@@ -33,7 +34,7 @@ public class PhotoManager : MonoBehaviour
     public bool allowButtonInput = true;
 
     [Header("Monitor Integration - PRIORITAS UTAMA")]
-    public Canvas monitorCanvas;    
+    public Canvas monitorCanvas;
     public Image monitorPhotoDisplay;
     public Text monitorStatusText;
 
@@ -106,6 +107,31 @@ public class PhotoManager : MonoBehaviour
     private bool canTakePhoto = true;
     private Vector2 currentPlayerCoordinates;
 
+    [System.Serializable]
+    public struct SubtitleLine
+    {
+        [TextArea(1, 3)] public string text;
+        [Tooltip("Durasi tampil (detik) untuk subtitle ini.")]
+        public float duration;
+    }
+
+    // ===================== SUBTITLE ======================
+    [Header("Subtitle Settings")]
+    public TMP_Text subtitleTMP;
+    public Text subtitleUI;
+    [Tooltip("Durasi default subtitle bila per-baris tidak diisi (>0).")]
+    public float defaultSubtitleDuration = 2.5f;
+    [Tooltip("Kalimat fallback bila tidak ada data.")]
+    [TextArea(1, 3)] public string wrongSubtitleFallback = "Bukan target. Ulangi pemotretan.";
+
+    [Tooltip("Daftar subtitle untuk setiap kesalahan (berurutan).")]
+    public SubtitleLine[] wrongSubtitles;
+
+    private Coroutine subtitleRoutine;
+    // ====================================================
+
+
+
 
     void Awake()
     {
@@ -118,6 +144,9 @@ public class PhotoManager : MonoBehaviour
         InitializePhotoSystem();   // <- penting agar sfxAudioSource fallback di-set
         if (AreAllLocationsPhotographed() && !IsGameOver())
             StartCoroutine(LoadGameOverAfter(0f));
+        // Matikan subtitle di awal
+        if (subtitleTMP != null) subtitleTMP.gameObject.SetActive(false);
+        if (subtitleUI != null) subtitleUI.gameObject.SetActive(false);
     }
 
 
@@ -415,6 +444,9 @@ public class PhotoManager : MonoBehaviour
 
         // === MAINKAN SUARA SALAH SESUAI URUTAN ===
         PlayWrongSfx(nextFail);
+        var (msg, dur) = GetWrongSubtitle(nextFail);
+        ShowSubtitle(msg, dur);
+
 
         // ====== NAIKKAN COUNTER & UPDATE UI ======
         defaultPhotoFailCount = nextFail;
@@ -548,5 +580,65 @@ public class PhotoManager : MonoBehaviour
             }
         }
     }
+    // ===================== SUBTITLE HELPER ======================
+    private void ShowSubtitle(string message, float duration = -1f)
+    {
+        if (string.IsNullOrWhiteSpace(message)) return;
+
+        // Set teks ke TMP jika ada, kalau tidak ke UI Text
+        if (subtitleTMP != null)
+        {
+            subtitleTMP.text = message;
+            subtitleTMP.gameObject.SetActive(true);
+        }
+        else if (subtitleUI != null)
+        {
+            subtitleUI.text = message;
+            subtitleUI.gameObject.SetActive(true);
+        }
+        else
+        {
+            // Tidak ada target subtitle, cukup log saja
+            Debug.Log($"[Subtitle] {message}");
+            return;
+        }
+
+        // Reset timer coroutine
+        if (subtitleRoutine != null) StopCoroutine(subtitleRoutine);
+        float useDuration = (duration > 0f) ? duration : defaultSubtitleDuration;
+        subtitleRoutine = StartCoroutine(HideSubtitleAfter(useDuration));
+    }
+
+    private IEnumerator HideSubtitleAfter(float delay)
+    {
+        float t = 0f;
+        // Pakai unscaled agar tetap jalan saat kamu pause/ubah timescale
+        while (t < delay)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (subtitleTMP != null) subtitleTMP.gameObject.SetActive(false);
+        if (subtitleUI != null) subtitleUI.gameObject.SetActive(false);
+        subtitleRoutine = null;
+    }
+
+    private (string text, float duration) GetWrongSubtitle(int failNumber)
+    {
+        if (wrongSubtitles != null && wrongSubtitles.Length > 0)
+        {
+            int idx = Mathf.Clamp(failNumber - 1, 0, wrongSubtitles.Length - 1);
+            var line = wrongSubtitles[idx];
+            if (!string.IsNullOrWhiteSpace(line.text))
+            {
+                return (line.text, line.duration > 0 ? line.duration : 2.5f);
+            }
+        }
+        return (wrongSubtitleFallback, 2.5f);
+    }
+
+    // ============================================================
+
     // ================================================================
 }
