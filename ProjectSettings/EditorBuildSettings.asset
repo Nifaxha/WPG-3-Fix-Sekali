@@ -9,8 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu/Main Menu.unity
     guid: cfe5fbb539ffbc343ae464984b92f437
   - enabled: 1
+    path: Assets/Scenes/Tutorial/Tutorial (Nyoba).unity
+    guid: 76d781db2888f474a971f8ca268b4917
+  - enabled: 1
+    path: Assets/Scenes/Cutscene/Cutscene_Intro.unity
+    guid: 5bd3cc95c7ed10f4c8a5a4d2aec5637f
+  - enabled: 1
     path: Assets/Scenes/Main Gameplay/Cube 1.unity
     guid: 851181d1c3c76564b9b93bb3eca03731
+  - enabled: 1
+    path: Assets/Scenes/Cutscene/Cutscene_Kalah.unity
+    guid: de236e2fb4a388d46abfa592f637e174
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: e896f559096c4a140a9a9c1fde3c03c6, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: cd0d3ed5e8bdb1d49a792669a40ff3da, type: 3}
