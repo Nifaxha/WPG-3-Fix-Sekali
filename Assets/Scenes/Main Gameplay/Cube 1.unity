@@ -5683,7 +5683,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: bc0ed098d8f46884e95108fda434065d, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.076
   m_Pitch: 1
@@ -5781,14 +5781,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04bfaf79666c1c143a942408250427a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 749617701}
-  pingClip: {fileID: 0}
+  source: {fileID: 0}
+  pingClip: {fileID: 8300000, guid: bb0b4a0bac8f23a4a8336f6288a9a2b8, type: 3}
+  photoManager: {fileID: 1472445062}
+  submarine: {fileID: 186879529}
   volume: 0.238
-  pitch: 1
-  syncToSweepSpeed: 1
-  sweepSpeed: 0.25
-  pingInterval: 3
-  startDelay: 0
+  usePitchScaling: 0
+  pitchFar: 0.9
+  pitchNear: 1.2
+  farDistance: 300
+  nearDistance: 10
+  intervalFar: 2
+  intervalNear: 0.25
+  freezeWhenIdle: 1
+  idleSpeedThreshold: 0.05
+  muteWhenNoTarget: 1
+  minIntervalClamp: 0.08
+  intervalSmoothTime: 0.25
+  holdFarUntilMoveOrNewTarget: 0
 --- !u!1 &750424475
 GameObject:
   m_ObjectHideFlags: 0
@@ -11192,12 +11202,12 @@ MonoBehaviour:
   wrongSubtitleFallback: Bukan target. Ulangi pemotretan.
   wrongSubtitles:
   - text: What did you just send?
-    duration: 2
-  - text: You're kidding, right? Don't waste a single photo!
     duration: 3
+  - text: You're kidding, right? Don't waste a single photo!
+    duration: 4
   - text: You're all alone down there... Along with whatever might still be alive
       there. Good night
-    duration: 5
+    duration: 9
 --- !u!82 &1472445063
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15905,6 +15915,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1227811197}
     m_Modifications:
+    - target: {fileID: 5657380582165300646, guid: 0ec10677a1f413349852af072b25a533, type: 3}
+      propertyPath: backwardIsStop
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7214799068192968384, guid: 0ec10677a1f413349852af072b25a533, type: 3}
       propertyPath: m_Name
       value: tuas 2 update

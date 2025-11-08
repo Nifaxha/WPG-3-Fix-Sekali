@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 
 [System.Serializable]
 public class PhotoLocation
@@ -67,6 +68,8 @@ public class PhotoManager : MonoBehaviour
     // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
     public static event System.Action<Vector2> OnPhotoTaken;
     public static event System.Action<int> OnPhotoTakenById;
+
+    public event Action<int> OnPhotoCaptured;
 
     // ===================== FAIL / GAME OVER =====================
     [Header("Fail / Game Over Settings")]
@@ -131,7 +134,11 @@ public class PhotoManager : MonoBehaviour
     // ====================================================
 
 
-
+    void MarkPhotoCaptured(int index)
+    {
+        photoLocations[index].hasBeenPhotographed = true;
+        OnPhotoCaptured?.Invoke(index);
+    }
 
     void Awake()
     {
