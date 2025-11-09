@@ -32,19 +32,26 @@ public class RadarPingAudio : MonoBehaviour
     [Tooltip("Kehalusan perubahan interval (SmoothDamp).")]
     public float intervalSmoothTime = 0.25f;
 
+    [Header("Distance Smoothing")]
+    [Tooltip("Semakin besar, perubahan jarak makin halus (anti 'goyang' saat gerak/kamera).")]
+    public float distanceSmoothSpeed = 2.5f;
+
     [Header("Reset Behaviour")]
-    [Tooltip("Setelah foto sukses, tahan interval FAR hingga kapal bergerak atau target baru terpilih.")]
+    [Tooltip("Setelah foto sukses, tahan interval FAR sampai kapal menjauh dari target atau target baru terpilih.")]
     public bool holdFarUntilMoveOrNewTarget = true;
 
     // ---- runtime state ----
     private float _timer;
     private float _currentInterval;
     private float _intervalVel;
+
+    private float _rawNearest = Mathf.Infinity;     // jarak hasil hitung langsung
+    private float _smoothedDistance = Mathf.Infinity; // jarak yang sudah dihaluskan
     private float _lastDistance = Mathf.Infinity;
 
     private bool _holdFar = false;          // tahan jarak FAR setelah foto sukses
-    private int _currentTargetIndex = -1;  // target yang sedang diincar
-    private int _lastCapturedIndex = -1;  // target yang baru saja difoto
+    private int _currentTargetIndex = -1;   // target yang sedang diincar
+    private int _lastCapturedIndex = -1;    // target yang barusan difoto
 
     void Awake()
     {
@@ -53,14 +60,33 @@ public class RadarPingAudio : MonoBehaviour
             source = gameObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.loop = false;
-            source.spatialBlend = 1f;
+            // PENTING: jadikan 2D agar tidak "aneh" saat kamera swing
+            source.spatialBlend = 0f;
         }
+        else
+        {
+            // pastikan 2D
+            source.spatialBlend = 0f;
+        }
+
         _currentInterval = Mathf.Max(intervalFar, intervalNear); // mulai dari kondisi jauh
         _lastDistance = farDistance;
+        _smoothedDistance = farDistance;
+        _rawNearest = farDistance;
     }
 
-    void OnEnable() { if (photoManager) photoManager.OnPhotoCaptured += HandlePhotoCaptured; }
-    void OnDisable() { if (photoManager) photoManager.OnPhotoCaptured -= HandlePhotoCaptured; }
+    void OnEnable()
+    {
+        if (photoManager) photoManager.OnPhotoCaptured += HandlePhotoCaptured;
+        PhotoManager.OnPhotoTakenById += HandlePhotoCaptured;   // <--- NEW
+    }
+
+
+    void OnDisable()
+    {
+        if (photoManager) photoManager.OnPhotoCaptured -= HandlePhotoCaptured;
+        PhotoManager.OnPhotoTakenById -= HandlePhotoCaptured;   // <--- NEW
+    }
 
     private void HandlePhotoCaptured(int idx)
     {
@@ -74,6 +100,9 @@ public class RadarPingAudio : MonoBehaviour
     private void ForceFarAndReset()
     {
         _lastDistance = farDistance;                           // freeze idle akan menahan 'jauh'
+        _smoothedDistance = farDistance;
+        _rawNearest = farDistance;
+
         _currentInterval = Mathf.Max(intervalFar, intervalNear);  // langsung normal
         _timer = 0f;
         _intervalVel = 0f;
@@ -109,40 +138,57 @@ public class RadarPingAudio : MonoBehaviour
             nearestIdx = -1;
         }
 
+        _rawNearest = nearest;
+
         // --- 3) Logika tahan FAR setelah foto sukses ---
         if (_holdFar)
         {
             // Paksa kondisi jauh (normal) sampai salah satu kondisi ini terpenuhi:
-            // 1) kapal mulai bergerak, atau
-            // 2) target terdekat berbeda dari yang barusan difoto (target baru terpilih)
+            // 1) Kapal sudah MENJAUH dari target bekas foto, atau
+            // 2) Target terdekat berbeda dari yang barusan difoto (target baru terpilih)
             nearest = farDistance;
-            _lastDistance = farDistance;
 
-            bool moved = speedAbs > idleSpeedThreshold;
+            bool movedFarEnough = (_rawNearest > nearDistance * 2f); // benar-benar menjauh
             bool newTargetFound = (nearestIdx != -1) && (nearestIdx != _lastCapturedIndex);
 
-            if (moved || newTargetFound)
+            if (movedFarEnough || newTargetFound)
                 _holdFar = false;
         }
         else
         {
             // --- 4) Freeze idle biasa ---
             if (freezeWhenIdle && speedAbs < idleSpeedThreshold)
+            {
                 nearest = _lastDistance;   // tahan jarak terakhir saat idle
+            }
             else
+            {
                 _lastDistance = nearest;   // update jarak hanya saat bergerak
+            }
         }
 
         _currentTargetIndex = nearestIdx;
 
-        // --- 5) Map jarak -> interval & haluskan ---
-        float t01 = Mathf.Clamp01(Mathf.InverseLerp(nearDistance, farDistance, nearest));
+        // --- 5) Haluskan jarak agar pitch/interval tidak "goyang" saat gerak/kamera ---
+        // Saat _holdFar aktif, _smoothedDistance sudah dipaksa jauh di ForceFarAndReset()
+        if (!_holdFar)
+        {
+            // Lerp ke nilai 'nearest' agar tidak fluktuatif tajam
+            _smoothedDistance = Mathf.Lerp(_smoothedDistance, nearest, Time.deltaTime * Mathf.Max(0.01f, distanceSmoothSpeed));
+        }
+        else
+        {
+            _smoothedDistance = farDistance;
+        }
+
+        // --- 6) Map jarak -> interval & haluskan ---
+        float t01 = Mathf.Clamp01(Mathf.InverseLerp(nearDistance, farDistance, _smoothedDistance));
         float targetInterval = Mathf.Lerp(intervalNear, intervalFar, t01);
         targetInterval = Mathf.Max(minIntervalClamp, targetInterval);
 
         _currentInterval = Mathf.SmoothDamp(_currentInterval, targetInterval, ref _intervalVel, intervalSmoothTime);
 
-        // --- 6) Timer aman terhadap perubahan interval ---
+        // --- 7) Timer aman terhadap perubahan interval ---
         _timer += Time.deltaTime;
         while (_timer >= _currentInterval)
         {
@@ -154,6 +200,6 @@ public class RadarPingAudio : MonoBehaviour
         }
 
         // DEBUG (aktifkan jika perlu)
-        // Debug.Log($"[RADAR] holdFar={_holdFar} nearestIdx={nearestIdx} lastCap={_lastCapturedIndex} dist={nearest:F1} spd={speedAbs:F2} int={_currentInterval:F2}");
+        // Debug.Log($"[RADAR] holdFar={_holdFar} nearestIdx={nearestIdx} lastCap={_lastCapturedIndex} raw={_rawNearest:F1} smooth={_smoothedDistance:F1} spd={speedAbs:F2} int={_currentInterval:F2}");
     }
 }

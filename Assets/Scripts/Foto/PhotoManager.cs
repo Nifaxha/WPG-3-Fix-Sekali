@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -400,6 +401,9 @@ public class PhotoManager : MonoBehaviour
 
                 // NEW: cocokkan by ID (anti mismatch)
                 OnPhotoTakenById?.Invoke(location.id);
+
+                // >>> NEW: Beri sinyal eksplisit ke RadarPingAudio <<<
+                OnPhotoCaptured?.Invoke(location.id);   // <--- TAMBAHKAN BARIS INI
             }
             // --- CEK: semua lokasi sudah beres? ---
             // === CEK: semua lokasi sudah difoto ===
