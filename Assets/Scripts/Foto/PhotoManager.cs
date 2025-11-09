@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,21 +54,59 @@ public class PhotoManager : MonoBehaviour
     public AudioSource cameraAudioSource;
     public AudioClip cameraShutterSound;
 
-    // NEW — SFX untuk salah foto
+    // --- WRONG FEEDBACK (sudah ada) ---
     [Tooltip("Suara yang diputar ketika salah mengambil foto")]
     public AudioClip wrongPhotoSound;
 
-    // NEW — SFX salah per-urutan (index 0 = salah pertama, index 1 = salah kedua, dst.)
     [Tooltip("Index 0 = salah ke-1, 1 = salah ke-2, 2 = salah ke-3, dst. Jika kosong, pakai fallback.")]
     public AudioClip[] wrongPhotoSounds = new AudioClip[3];
 
     [Tooltip("AudioSource untuk SFX (jika kosong, akan pakai cameraAudioSource)")]
     public AudioSource sfxAudioSource;
 
-    // Sinyal yang akan dikirim saat foto lokasi baru berhasil diambil
+    // === SUCCESS FEEDBACK (BARU & FLEKSIBEL) ===
+    [Header("Success Feedback (Audio + Subtitle)")]
+    [Tooltip("Kumpulan klip audio untuk foto sukses. Kamu bebas tambah/kurangi di Inspector.")]
+    public AudioClip[] successPhotoSounds;
+
+    public enum SuccessSoundMode { First, Random, Sequence, AllAtOnce }
+    [Tooltip("Cara memutar klip sukses: First (pakai klip pertama), Random (acak), Sequence (bergiliran), AllAtOnce (tumpuk semua).")]
+    public SuccessSoundMode successSoundMode = SuccessSoundMode.Random;
+
+    [Range(0f, 1f)] public float successVolume = 1f;
+    [Tooltip("Rentang pitch acak (min,max). Set (1,1) untuk pitch normal.")]
+    public Vector2 successPitchRange = new Vector2(1f, 1f);
+    [Tooltip("Jeda antar-klip untuk mode Sequence (detik).")]
+    public float successSequenceDelay = 0.05f;
+
+    private int _successSeqIndex = 0;   // penunjuk giliran untuk mode Sequence
+    private Coroutine _successAudioRoutine;
+
+    // >>> NEW: Subtitle modes <<<
+    public enum SuccessSubtitleMode { First, Random, Sequence, AllQueued }
+    [Tooltip("Cara memilih subtitle sukses: First/Random/Sequence/AllQueued (tampilkan semua berurutan).")]
+    public SuccessSubtitleMode successSubtitleMode = SuccessSubtitleMode.Random;
+
+    private int _successSubtitleSeqIndex = 0;   // pointer untuk mode Sequence
+    private Coroutine _successSubtitleRoutine;  // coroutine untuk AllQueued
+
+    [System.Serializable]
+    public struct SubtitleLine
+    {
+        [TextArea(1, 3)] public string text;
+        [Tooltip("Durasi tampil (detik) untuk subtitle ini.")]
+        public float duration;
+    }
+
+    [Tooltip("Daftar subtitle untuk foto sukses (gunakan {location} untuk nama lokasi). Kalau kosong akan pakai defaultSuccessSubtitle.")]
+    public SubtitleLine[] successSubtitles;
+
+    [Tooltip("Fallback jika array di atas kosong.")]
+    [TextArea(1, 3)] public string defaultSuccessSubtitle = "Target captured successfully: {location}";
+
+    // === EVENTS ===
     public static event System.Action<Vector2> OnPhotoTaken;
     public static event System.Action<int> OnPhotoTakenById;
-
     public event Action<int> OnPhotoCaptured;
 
     // ===================== FAIL / GAME OVER =====================
@@ -93,33 +130,24 @@ public class PhotoManager : MonoBehaviour
     [Tooltip("Delay sebelum pindah ke scene setelah semua foto berhasil diambil.")]
     public float delayBeforeWinScene = 2f;
 
-
-    // ===================== NEW: HEALTH UI ======================
+    // ===================== HEALTH UI ======================
     [Header("Health Settings (UI)")]
     [Tooltip("Jumlah health maksimum (disarankan sama dengan Max Default Photo Fails)")]
-    public bool useHealthUI = false;   // NEW: kalau false, UI hati tidak di-update
-    public int maxHealth = 3; // NEW
-    private int currentHealth; // NEW
+    public bool useHealthUI = false;
+    public int maxHealth = 3;
+    private int currentHealth;
 
     [Tooltip("Susunan ikon hati dari kiri ke kanan")]
-    public Image[] healthIcons; // NEW
-    public Sprite heartFull;    // NEW
-    public Sprite heartEmpty;   // NEW
-    // ===========================================================
+    public Image[] healthIcons;
+    public Sprite heartFull;
+    public Sprite heartEmpty;
+    // =====================================================
 
     // Private variables
     private bool canTakePhoto = true;
     private Vector2 currentPlayerCoordinates;
 
-    [System.Serializable]
-    public struct SubtitleLine
-    {
-        [TextArea(1, 3)] public string text;
-        [Tooltip("Durasi tampil (detik) untuk subtitle ini.")]
-        public float duration;
-    }
-
-    // ===================== SUBTITLE ======================
+    // ===================== SUBTITLE (sudah ada) ======================
     [Header("Subtitle Settings")]
     public TMP_Text subtitleTMP;
     public Text subtitleUI;
@@ -133,7 +161,6 @@ public class PhotoManager : MonoBehaviour
 
     private Coroutine subtitleRoutine;
     // ====================================================
-
 
     void MarkPhotoCaptured(int index)
     {
@@ -149,14 +176,13 @@ public class PhotoManager : MonoBehaviour
 
     void Start()
     {
-        InitializePhotoSystem();   // <- penting agar sfxAudioSource fallback di-set
+        InitializePhotoSystem();
         if (AreAllLocationsPhotographed() && !IsGameOver())
             StartCoroutine(LoadGameOverAfter(0f));
-        // Matikan subtitle di awal
+
         if (subtitleTMP != null) subtitleTMP.gameObject.SetActive(false);
         if (subtitleUI != null) subtitleUI.gameObject.SetActive(false);
     }
-
 
     void Update()
     {
@@ -198,26 +224,18 @@ public class PhotoManager : MonoBehaviour
         if (cameraAudioSource == null)
             cameraAudioSource = GetComponent<AudioSource>();
 
-        // NEW: fallback SFX AudioSource
         if (sfxAudioSource == null)
             sfxAudioSource = cameraAudioSource;
 
-        // Reset counters
         defaultPhotoFailCount = 0;
-
-        // ===== NEW: sync health dengan fail counter =====
-        // Disarankan maxHealth == maxDefaultPhotoFails agar konsisten
 
         if (maxHealth != maxDefaultPhotoFails)
         {
-            Debug.LogWarning($"[PhotoManager] maxHealth ({maxHealth}) != maxDefaultPhotoFails ({maxDefaultPhotoFails}). " +
-                                $"Menyamakan keduanya untuk konsistensi.");
+            Debug.LogWarning($"[PhotoManager] maxHealth ({maxHealth}) != maxDefaultPhotoFails ({maxDefaultPhotoFails}). Menyamakan keduanya untuk konsistensi.");
             maxHealth = maxDefaultPhotoFails;
         }
         currentHealth = maxHealth;
         UpdateHealthUI();
-
-        // =================================================
 
         Debug.Log($"PhotoManager initialized. Locations: {photoLocations.Count}");
     }
@@ -248,14 +266,13 @@ public class PhotoManager : MonoBehaviour
 
     private AudioClip GetWrongSfxClip(int failNumber)
     {
-        // failNumber: 1-based (1,2,3,...)
         if (wrongPhotoSounds != null && wrongPhotoSounds.Length > 0)
         {
             int idx = Mathf.Clamp(failNumber - 1, 0, wrongPhotoSounds.Length - 1);
             var clip = wrongPhotoSounds[idx];
             if (clip != null) return clip;
         }
-        return wrongPhotoSound; // fallback
+        return wrongPhotoSound;
     }
 
     private void PlayWrongSfx(int failNumber)
@@ -266,7 +283,7 @@ public class PhotoManager : MonoBehaviour
         if (sfxAudioSource != null && clip != null)
         {
             sfxAudioSource.PlayOneShot(clip);
-            Debug.Log($"[PhotoManager] Wrong SFX -> fail #{failNumber}, clip: {clip.name}");
+            Debug.Log($"[PhotoManager] Wrong SFX -> fail #{failNumber}, clip: {clip?.name}");
         }
         else
         {
@@ -274,13 +291,11 @@ public class PhotoManager : MonoBehaviour
         }
     }
 
-
     public void TakePhoto()
     {
         if (!canTakePhoto) return;
         if (submarineCoordinatesScript == null) { Debug.LogError("No SubmarineCoordinates!"); return; }
         if (photoDisplayUI == null && monitorPhotoDisplay == null) { Debug.LogError("No display assigned!"); return; }
-
         StartCoroutine(PhotoSequence());
     }
 
@@ -302,7 +317,7 @@ public class PhotoManager : MonoBehaviour
         if (foundLocation != null)
             DisplayLocationPhoto(foundLocation);
         else
-            DisplayWhitePhoto(); // salah → kurangi health + cek game over
+            DisplayWhitePhoto();
 
         yield return new WaitForSeconds(0.5f);
 
@@ -338,7 +353,6 @@ public class PhotoManager : MonoBehaviour
         return null;
     }
 
-
     // Semua lokasi (yang punya sprite) sudah difoto?
     private bool AreAllLocationsPhotographed()
     {
@@ -368,12 +382,10 @@ public class PhotoManager : MonoBehaviour
         }
     }
 
-
-    // Tunda pindah scene agar foto terakhir sempat tampil
     private IEnumerator LoadGameOverAfter(float delay)
     {
         yield return new WaitForSeconds(delay);
-        TriggerGameOver(); // pakai method kamu yang sudah ada
+        TriggerGameOver();
     }
 
     void DisplayLocationPhoto(PhotoLocation location)
@@ -391,28 +403,27 @@ public class PhotoManager : MonoBehaviour
                 monitorStatusText.text = status;
                 monitorStatusText.gameObject.SetActive(true);
             }
+
+            // Mainkan feedback & event hanya saat PERTAMA KALI lokasi ini difoto
             if (!location.hasBeenPhotographed)
             {
                 location.hasBeenPhotographed = true;
                 Debug.Log($"New location discovered: {location.locationName}");
 
-                // Sudah ada:
+                // Event untuk subsistem lain (radar, dsb.)
                 OnPhotoTaken?.Invoke(location.coordinates);
-
-                // NEW: cocokkan by ID (anti mismatch)
                 OnPhotoTakenById?.Invoke(location.id);
+                OnPhotoCaptured?.Invoke(location.id);
 
-                // >>> NEW: Beri sinyal eksplisit ke RadarPingAudio <<<
-                OnPhotoCaptured?.Invoke(location.id);   // <--- TAMBAHKAN BARIS INI
+                // === SUCCESS FEEDBACK: audio fleksibel + subtitle ===
+                PlaySuccessFeedback(location.locationName);
             }
-            // --- CEK: semua lokasi sudah beres? ---
-            // === CEK: semua lokasi sudah difoto ===
+
             if (AreAllLocationsPhotographed() && !IsGameOver())
             {
                 Debug.Log("[PhotoManager] Semua lokasi berhasil difoto. Menuju ke scene kemenangan...");
                 StartCoroutine(LoadAllPhotosCompleteSceneAfterDelay(delayBeforeWinScene));
             }
-
 
             StartCoroutine(HideMonitorPhotoAfterDelay(photoDisplayDuration));
         }
@@ -424,6 +435,178 @@ public class PhotoManager : MonoBehaviour
         }
 
         if (!location.hasBeenPhotographed) location.hasBeenPhotographed = true;
+    }
+
+    // === SUCCESS FEEDBACK: helper ===
+    private void PlaySuccessFeedback(string locationName)
+    {
+        if (_successAudioRoutine != null)
+            StopCoroutine(_successAudioRoutine);
+
+        // 1) Audio sukses sesuai mode
+        _successAudioRoutine = StartCoroutine(PlaySuccessSoundsRoutine());
+
+        // 2) Subtitle sukses
+        if (_successSubtitleRoutine != null)
+        {
+            StopCoroutine(_successSubtitleRoutine);
+            _successSubtitleRoutine = null;
+        }
+
+        // Tidak ada data → fallback
+        if (successSubtitles == null || successSubtitles.Length == 0)
+        {
+            string fb = defaultSuccessSubtitle.Replace("{location}", locationName);
+            ShowSubtitle(fb, defaultSubtitleDuration);
+            return;
+        }
+
+        // Mode ALL QUEUED → tampilkan semua berurutan (tiap item pakai durasinya)
+        if (successSubtitleMode == SuccessSubtitleMode.AllQueued)
+        {
+            _successSubtitleRoutine = StartCoroutine(PlaySuccessSubtitlesQueued(locationName));
+            return;
+        }
+        // Pilih satu baris sesuai mode
+        int idx = 0;
+        switch (successSubtitleMode)
+        {
+            case SuccessSubtitleMode.First:
+                idx = 0;
+                break;
+
+            case SuccessSubtitleMode.Random:
+                idx = UnityEngine.Random.Range(0, successSubtitles.Length);
+                break;
+
+            case SuccessSubtitleMode.Sequence:
+                idx = _successSubtitleSeqIndex % successSubtitles.Length;
+                _successSubtitleSeqIndex = (idx + 1) % successSubtitles.Length;
+                break;
+        }
+
+        var line = successSubtitles[idx];
+        string text = string.IsNullOrWhiteSpace(line.text) ? defaultSuccessSubtitle : line.text;
+        float dur = (line.duration > 0f) ? line.duration : defaultSubtitleDuration;
+
+        text = text.Replace("{location}", locationName);
+        ShowSubtitle(text, dur);
+    }
+
+    private IEnumerator PlaySuccessSubtitlesQueued(string locationName)
+    {
+        // Tampilkan semua item successSubtitles secara berurutan
+        for (int i = 0; i < successSubtitles.Length; i++)
+        {
+            var line = successSubtitles[i];
+            string txt = string.IsNullOrWhiteSpace(line.text) ? defaultSuccessSubtitle : line.text;
+            float dur = (line.duration > 0f) ? line.duration : defaultSubtitleDuration;
+
+            txt = txt.Replace("{location}", locationName);
+            ShowSubtitle(txt, dur);
+
+            // Tunggu durasi baris ini sebelum lanjut baris berikutnya
+            float t = 0f;
+            while (t < dur)
+            {
+                t += Time.unscaledDeltaTime;
+                yield return null;
+            }
+        }
+        _successSubtitleRoutine = null;
+    }
+
+
+    private IEnumerator PlaySuccessSoundsRoutine()
+    {
+        if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource;
+
+        if (successPhotoSounds == null || successPhotoSounds.Length == 0 || sfxAudioSource == null)
+            yield break;
+
+        // Helper untuk pitch acak
+        float pitch = Mathf.Clamp(UnityEngine.Random.Range(successPitchRange.x, successPitchRange.y), 0.1f, 3f);
+
+        switch (successSoundMode)
+        {
+            case SuccessSoundMode.First:
+                {
+                    var clip = successPhotoSounds[0];
+                    if (clip != null)
+                    {
+                        float oldVol = sfxAudioSource.volume;
+                        float oldPitch = sfxAudioSource.pitch;
+                        sfxAudioSource.pitch = pitch;
+                        sfxAudioSource.PlayOneShot(clip, successVolume);
+                        sfxAudioSource.pitch = oldPitch;
+                        sfxAudioSource.volume = oldVol;
+                    }
+                    break;
+                }
+            case SuccessSoundMode.Random:
+                {
+                    int tries = 0;
+                    AudioClip clip = null;
+                    // cari clip valid (tidak null), maksimum 8 percobaan
+                    while (tries < 8 && (clip == null))
+                    {
+                        var idx = UnityEngine.Random.Range(0, successPhotoSounds.Length);
+                        clip = successPhotoSounds[idx];
+                        tries++;
+                    }
+                    if (clip != null)
+                    {
+                        float oldVol = sfxAudioSource.volume;
+                        float oldPitch = sfxAudioSource.pitch;
+                        sfxAudioSource.pitch = pitch;
+                        sfxAudioSource.PlayOneShot(clip, successVolume);
+                        sfxAudioSource.pitch = oldPitch;
+                        sfxAudioSource.volume = oldVol;
+                    }
+                    break;
+                }
+            case SuccessSoundMode.Sequence:
+                {
+                    // mainkan SATU klip sesuai giliran (bukan semua); giliran bergeser tiap sukses
+                    int safeLen = successPhotoSounds.Length;
+                    for (int k = 0; k < safeLen; k++)
+                    {
+                        int idx = (_successSeqIndex + k) % safeLen;
+                        var clip = successPhotoSounds[idx];
+                        if (clip != null)
+                        {
+                            float oldVol = sfxAudioSource.volume;
+                            float oldPitch = sfxAudioSource.pitch;
+                            sfxAudioSource.pitch = pitch;
+                            sfxAudioSource.PlayOneShot(clip, successVolume);
+                            sfxAudioSource.pitch = oldPitch;
+                            sfxAudioSource.volume = oldVol;
+
+                            _successSeqIndex = (idx + 1) % safeLen; // geser giliran
+                            break;
+                        }
+                    }
+                    break;
+                }
+            case SuccessSoundMode.AllAtOnce:
+                {
+                    // tumpuk semua klip valid sekaligus (layering)
+                    foreach (var clip in successPhotoSounds)
+                    {
+                        if (clip == null) continue;
+                        float oldVol = sfxAudioSource.volume;
+                        float oldPitch = sfxAudioSource.pitch;
+                        sfxAudioSource.pitch = pitch;
+                        sfxAudioSource.PlayOneShot(clip, successVolume);
+                        sfxAudioSource.pitch = oldPitch;
+                        sfxAudioSource.volume = oldVol;
+
+                        if (successSequenceDelay > 0f)
+                            yield return new WaitForSeconds(successSequenceDelay);
+                    }
+                    break;
+                }
+        }
     }
 
     void DisplayWhitePhoto()
@@ -458,7 +641,6 @@ public class PhotoManager : MonoBehaviour
         var (msg, dur) = GetWrongSubtitle(nextFail);
         ShowSubtitle(msg, dur);
 
-
         // ====== NAIKKAN COUNTER & UPDATE UI ======
         defaultPhotoFailCount = nextFail;
 
@@ -478,11 +660,9 @@ public class PhotoManager : MonoBehaviour
         // ====== GAME OVER? TUNGGU SFX TERAKHIR DULU ======
         if (defaultPhotoFailCount >= maxDefaultPhotoFails)
         {
-            // Pada salah terakhir: tunggu SFX dulu baru pindah scene
             var lastClip = GetWrongSfxClip(defaultPhotoFailCount);
             StartCoroutine(GameOverAfterSfx(lastClip));
         }
-        // =================================
     }
 
     IEnumerator GameOverAfterSfx(AudioClip clip = null)
@@ -496,14 +676,12 @@ public class PhotoManager : MonoBehaviour
 
         onGameOver?.Invoke();
 
-        // Tentukan sumber dan clip yang ditunggu
         if (sfxAudioSource == null) sfxAudioSource = cameraAudioSource;
         AudioClip waitClip = clip != null ? clip : wrongPhotoSound;
 
         float wait = 0f;
         if (sfxAudioSource != null && waitClip != null)
         {
-            // Jika belum diputar dari DisplayWhitePhoto (edge case), putar di sini
             if (!sfxAudioSource.isPlaying)
                 sfxAudioSource.PlayOneShot(waitClip);
 
@@ -519,7 +697,6 @@ public class PhotoManager : MonoBehaviour
         if (!string.IsNullOrEmpty(gameOverSceneName))
             SceneManager.LoadScene(gameOverSceneName);
     }
-
 
     IEnumerator HidePhotoAfterDelay(float delay)
     {
@@ -567,7 +744,7 @@ public class PhotoManager : MonoBehaviour
         // else: Time.timeScale = 0f; // jika ingin pause
     }
 
-    // ===================== NEW: HEALTH UI HELPER ======================
+    // ===================== HEALTH UI HELPER ======================
     private void UpdateHealthUI()
     {
         if (healthIcons == null || healthIcons.Length == 0) return;
@@ -576,7 +753,6 @@ public class PhotoManager : MonoBehaviour
         {
             if (healthIcons[i] == null) continue;
 
-            // i < currentHealth → full, sisanya empty
             bool full = i < currentHealth;
 
             if (heartFull != null && heartEmpty != null)
@@ -591,12 +767,12 @@ public class PhotoManager : MonoBehaviour
             }
         }
     }
+
     // ===================== SUBTITLE HELPER ======================
     private void ShowSubtitle(string message, float duration = -1f)
     {
         if (string.IsNullOrWhiteSpace(message)) return;
 
-        // Set teks ke TMP jika ada, kalau tidak ke UI Text
         if (subtitleTMP != null)
         {
             subtitleTMP.text = message;
@@ -609,12 +785,10 @@ public class PhotoManager : MonoBehaviour
         }
         else
         {
-            // Tidak ada target subtitle, cukup log saja
             Debug.Log($"[Subtitle] {message}");
             return;
         }
 
-        // Reset timer coroutine
         if (subtitleRoutine != null) StopCoroutine(subtitleRoutine);
         float useDuration = (duration > 0f) ? duration : defaultSubtitleDuration;
         subtitleRoutine = StartCoroutine(HideSubtitleAfter(useDuration));
@@ -622,11 +796,11 @@ public class PhotoManager : MonoBehaviour
 
     private IEnumerator HideSubtitleAfter(float delay)
     {
-        float t = 0f;
-        // Pakai unscaled agar tetap jalan saat kamu pause/ubah timescale
-        while (t < delay)
+        float elapsed = 0f;
+        while (elapsed < delay)
         {
-            t += Time.unscaledDeltaTime;
+            if (!AudioListener.pause)
+                elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
 
@@ -648,8 +822,4 @@ public class PhotoManager : MonoBehaviour
         }
         return (wrongSubtitleFallback, 2.5f);
     }
-
-    // ============================================================
-
-    // ================================================================
 }

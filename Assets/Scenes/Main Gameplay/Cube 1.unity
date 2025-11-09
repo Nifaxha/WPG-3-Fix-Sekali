@@ -399,6 +399,185 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 121662985}
   m_CullTransparentMesh: 1
+--- !u!1 &130032458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 130032461}
+  - component: {fileID: 130032460}
+  - component: {fileID: 130032459}
+  m_Layer: 0
+  m_Name: TutorialManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &130032459
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130032458}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &130032460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130032458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb6d156dbde0e4438b20d063e82450a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 130032459}
+  tutorialClip: {fileID: 8300000, guid: 0636c3cefecba0e4c8f6eee465933d01, type: 3}
+  subtitleTMP: {fileID: 1558826248}
+  subtitleLines:
+  - text: Marta 3, listen carefully
+    startTime: 1
+    duration: 2.5
+  - text: In front of you is the control panel
+    startTime: 3.5
+    duration: 2.5
+  - text: Move your hand to the navigation button,
+    startTime: 6
+    duration: 3.5
+  - text: Then press E to interact
+    startTime: 9.5
+    duration: 3.5
+  - text: If you need to stop, pull the handbrake.
+    startTime: 13
+    duration: 3.5
+  - text: The mechanism is the same
+    startTime: 16.5
+    duration: 3.5
+  - text: move your hand to the lever, then press E to pull it.
+    startTime: 20
+    duration: 5.5
+  - text: The button to take a picture is behind you on the right side
+    startTime: 25.5
+    duration: 4.5
+  - text: Move your gaze to the camera panel and press E as well
+    startTime: 30
+    duration: 5.5
+  - text: Don't waste your shots, every photo counts in this mission
+    startTime: 35.5
+    duration: 6.5
+  - text: And finally, press tab to open the map. Don't get lost, understand?
+    startTime: 42
+    duration: 8
+  startDelay: 3
+--- !u!4 &130032461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130032458}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -270.80414, y: 38.620758, z: -2581.029}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &133394749
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,11 +1864,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 150478667729401436, guid: 468318cdfc332ea4984acc7c6df96f85, type: 3}
       propertyPath: coordinateXZ.x
-      value: -200
+      value: 1020
       objectReference: {fileID: 0}
     - target: {fileID: 150478667729401436, guid: 468318cdfc332ea4984acc7c6df96f85, type: 3}
       propertyPath: coordinateXZ.y
-      value: -2300
+      value: -330
       objectReference: {fileID: 0}
     - target: {fileID: 5588561921777441560, guid: 468318cdfc332ea4984acc7c6df96f85, type: 3}
       propertyPath: m_Pivot.x
@@ -5785,7 +5964,7 @@ MonoBehaviour:
   pingClip: {fileID: 8300000, guid: bb0b4a0bac8f23a4a8336f6288a9a2b8, type: 3}
   photoManager: {fileID: 1472445062}
   submarine: {fileID: 186879529}
-  volume: 0.238
+  volume: 0.03
   usePitchScaling: 0
   pitchFar: 0.9
   pitchNear: 1.2
@@ -5798,6 +5977,7 @@ MonoBehaviour:
   muteWhenNoTarget: 1
   minIntervalClamp: 0.08
   intervalSmoothTime: 0.25
+  distanceSmoothSpeed: 2.5
   holdFarUntilMoveOrNewTarget: 0
 --- !u!1 &750424475
 GameObject:
@@ -11135,31 +11315,31 @@ MonoBehaviour:
     coordinates: {x: -270, y: -1900}
     radius: 70
     locationName: Tempat 3
-    photoSprite: {fileID: 21300000, guid: c4a19674f2e0c46458dbf188535386a0, type: 3}
+    photoSprite: {fileID: 21300000, guid: 6cf4d968c968c7b41a26fe8b09e6d141, type: 3}
     hasBeenPhotographed: 0
   - id: 3
     coordinates: {x: 1020, y: -330}
     radius: 70
     locationName: Tempat 3
-    photoSprite: {fileID: 21300000, guid: c0cb696229420554d8acb339df13fc99, type: 3}
+    photoSprite: {fileID: 21300000, guid: f0b39f0b6d572884fa73da6601a63b00, type: 3}
     hasBeenPhotographed: 0
   - id: 4
     coordinates: {x: -1586, y: 1920}
     radius: 70
     locationName: Tempat 3
-    photoSprite: {fileID: 21300000, guid: 31a9bcf6838a8764eb6dc62678142ba7, type: 3}
+    photoSprite: {fileID: 21300000, guid: ec9869078118594469adcd1b567d1299, type: 3}
     hasBeenPhotographed: 0
   - id: 5
     coordinates: {x: -2558, y: 968}
     radius: 70
     locationName: Tempat 3
-    photoSprite: {fileID: 21300000, guid: 78ac7e24b52722b4b9f2ddb000da4c86, type: 3}
+    photoSprite: {fileID: 21300000, guid: 6e23b0f18999b9a4583117a360e94e66, type: 3}
     hasBeenPhotographed: 0
   - id: 6
     coordinates: {x: 2300, y: 407}
     radius: 70
     locationName: Tempat 3
-    photoSprite: {fileID: 21300000, guid: 50ad871a89021a644b1ceed302ec73f2, type: 3}
+    photoSprite: {fileID: 21300000, guid: 55d2504e425736d4c8c7114995e146fc, type: 3}
     hasBeenPhotographed: 0
   defaultWhitePhoto: {fileID: 21300000, guid: 9ffd1bfe584f92b449c7057a6b95fdec, type: 3}
   photoKey: 0
@@ -11181,6 +11361,35 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 904ce3ae7400eb449a3633666856c9bd, type: 3}
   - {fileID: 8300000, guid: f377ec857ec827a4cacb9c3a35015fb8, type: 3}
   sfxAudioSource: {fileID: 1472445063}
+  successPhotoSounds:
+  - {fileID: 8300000, guid: e4ebbab2cab0e2342a9cfdb2c16dc5ae, type: 3}
+  - {fileID: 8300000, guid: 6ca61c4f5b32b3940825b6805dc0c9ee, type: 3}
+  - {fileID: 8300000, guid: 33f75b82a47bc4949a387496aae546f3, type: 3}
+  - {fileID: 8300000, guid: a0767b74a7bd0f34ea71a7b5d47fd433, type: 3}
+  - {fileID: 8300000, guid: 3ea0712c26c6aa043ae92bdb77ee2e7b, type: 3}
+  - {fileID: 8300000, guid: d71a05908526e6d4bba52e4e662bd744, type: 3}
+  - {fileID: 8300000, guid: 78b5b9858ec592a40865aa18a92b0cf4, type: 3}
+  successSoundMode: 2
+  successVolume: 1
+  successPitchRange: {x: 1, y: 1}
+  successSequenceDelay: 0.05
+  successSubtitleMode: 2
+  successSubtitles:
+  - text: good job
+    duration: 2
+  - text: good, keep going
+    duration: 2.2
+  - text: interesting, you found something
+    duration: 4
+  - text: hmm.. interesting
+    duration: 2.5
+  - text: wow
+    duration: 2
+  - text: good, keep going
+    duration: 3
+  - text: GREAT!!
+    duration: 2
+  defaultSuccessSubtitle: 'Target captured successfully: {location}'
   maxDefaultPhotoFails: 3
   gameOverSceneName: Cutscene_Kalah
   onGameOver:
@@ -16004,3 +16213,4 @@ SceneRoots:
   - {fileID: 809854162}
   - {fileID: 1427126514}
   - {fileID: 1015492303}
+  - {fileID: 130032461}
