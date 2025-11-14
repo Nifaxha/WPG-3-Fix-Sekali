@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 public class SubmarineCoordinates : MonoBehaviour
@@ -37,6 +37,11 @@ public class SubmarineCoordinates : MonoBehaviour
 
     private bool isMovingAudioPlaying = false;
     private bool isIdleAudioPlaying = false;
+
+    [Header("Reverse Shake Settings")]
+    public bool softShakeWhenReversing = true;
+    public float reverseShakeIntensity = 0.04f;
+    public float reverseShakeDuration = 0.12f;
 
     [Header("Vibration / Shake Settings")]
     public Transform shakeTarget;
@@ -247,11 +252,36 @@ public class SubmarineCoordinates : MonoBehaviour
 
     private void DecreaseSpeed()
     {
+        // Simpan speed sebelumnya buat cek apakah lagi ganti arah
+        float previousSpeed = currentSpeed;
+
         currentSpeed -= acceleration * Time.deltaTime;
         if (currentSpeed < -maxSpeed)
             currentSpeed = -maxSpeed;
 
-        TriggerShake();
+        // ===========================
+        // KONTROL GETARAN SAAT MUNDUR
+        // ===========================
+        if (softShakeWhenReversing)
+        {
+            // Kalau sebelumnya sudah mundur atau hampir berhenti
+            // (biasanya kondisi setelah nabrak lalu tekan mundur berkali-kali)
+            if (previousSpeed <= 0f)
+            {
+                // Pakai getaran lembut
+                TriggerShake(reverseShakeIntensity, reverseShakeDuration);
+            }
+            else
+            {
+                // Ini momen pertama kali ganti dari maju → mundur,
+                // boleh sedikit lebih kerasa biar terasa "geser gigi"
+                TriggerShake();
+            }
+        }
+        else
+        {
+            TriggerShake();
+        }
     }
 
     private void TriggerShake()
